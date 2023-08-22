@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%-include('head') %>
+</head>
+
+<body>
+    <div style="display: flex;">
+        <!-- 內容 -->
+        <div class="content" style="width: 75%;margin-left: 4%;">
+            <h1 style="line-height: 1.3;">營業人資料</h1>
+            <form name="companyinfo">
+                <table id="details" style="margin-top: 1rem;">
+                    <tbody>
+                        <tr>
+                            <td class="tdtitle text-xs" style="width: 15%;">公司名稱<label style="color:red;">*</label></td>
+                            <td style="width: 20%;">
+                                <input id="name" type="text" style="width: 200px;">
+                            </td>
+                            <td class="tdtitle" style="width: 15%;">負責人</td>
+                            <td style="width: 20%;">
+                                <input id="personincharge" type="text" style="width: 200px;">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tdtitle">統一編號</td>
+                            <td>
+                                <input id="id" type="text" style="width: 200px; background-color: #d1d1d1;" readonly>
+                                <div style="color: red;">修改統編請聯繫客服</div>
+                            </td>
+                            <td class="tdtitle">稅籍編號</td>
+                            <td>
+                                <input id="taxid" type="text" style="width: 200px;">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tdtitle">公司地址</td>
+                            <td colspan="3">
+                                <input id="cmp_postal" type="text" style="width: 15%;" maxlength="100"
+                                    placeholder="郵遞區號">
+                                <input id="cmp_address" type="text" style="width: 80%;" maxlength="100"
+                                    placeholder="地址">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tdtitle">通訊地址</td>
+                            <td colspan="3">
+                                <label><input id="setaddress" type="checkbox" onclick="setaddr()">同上方公司地址</label><br>
+                                <input id="connection_postal" type="text" style="width: 15%;" maxlength="100"
+                                    placeholder="郵遞區號">
+                                <input id="connection_address" type="text" style="width: 80%;" maxlength="100"
+                                    placeholder="地址">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tdtitle">公司電話</td>
+                            <td>
+                                <input id="tel" type="text" style="width: 200px;">
+                                <div style="color: red;">電話格式(ex:0226551188)</div>
+                            </td>
+                            <td class="tdtitle">傳真電話</td>
+                            <td>
+                                <input id="facsimilenumber" type="text" style="width: 200px;">
+                                <div style="color: red;">電話格式(ex:0226551188)</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="tdtitle">Email</td>
+                            <td>
+                                <input id="email" type="text" style="width: 200px;">
+                            </td>
+                            <td class="tdtitle">備註</td>
+                            <td>
+                                <input id="roleremark" type="text" style="width: 200px;">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <h3>發票抬頭設定</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <input type="radio" id="s1" name="stype" value="1" onchange="changestype();">
+                                <label for="s1">公司名稱</label>
+                                <br>
+                                <input type="radio" id="s2" name="stype" value="2" onchange="changestype();">
+                                <label for="s2">企業識別標章</label>
+                                <span id="cmp_img">
+                                    <input type="file" onchange="readAsDataURL()">
+                                    <img src="" alt="" onclick="changimg()">
+                                </span>
+
+                                <br>
+                                <input type="radio" id="s3" name="stype" value="3" onchange="changestype();">
+                                <label for="s3">自訂顯示名稱</label>
+                                <input id="custom_name" type="text">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+            <br>
+            <button class="btn btn-outline-primary btn-lg" onclick="submitcompanyinfo()">儲存</button>
+            <br>
+        </div>
+    </div>
+</body>
+
+</html>

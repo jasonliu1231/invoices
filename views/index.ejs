@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%-include('head') %>
+</head>
+
+<body>
+    <div class="container">
+        <h1>電子發票平台</h1>
+        <div class="mx-auto align-middle">
+            <div class="mb-3">
+                <label for="text_Signin" class="form-label">Signin</label>
+                <input type="email" class="form-control" id="text_Signin" aria-describedby="emailHelp" />
+                <div class="form-text">
+                    登入名稱的格式為:員工名稱@所屬的公司統一編號
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="text_Password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="text_Password" />
+                <div class="form-text">注意密碼是區分大小寫的</div>
+            </div>
+            <button id="submit" type="submit" class="btn btn-primary" onclick="Signin()">
+                Signin
+            </button>
+        </div>
+    </div>
+</body>
+
+</html>
