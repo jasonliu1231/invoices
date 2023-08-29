@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%-include('head') %>
+</head>
+
+<body>
+  <%-include('navbar') %>
+    <%-include('modal') %>
+      <div class="container mt-5">
+        <div class="content p-lg-5 p-sm-2">
+          <h1 class="lh-lg">客戶資訊</h1>
+          <h3>客戶搜尋</h3>
+          <div class="input-group mb-3">
+            <input id="condition" type="text" class="form-control p-2" placeholder="關聯搜尋，姓名、電話號碼、手機號碼、統一編號、註記"
+              aria-label="Recipient's username" aria-describedby="searchBtn">
+            <button class="btn btn-outline-primary" type="button" id="searchBtn" data-bs-toggle="modal"
+              data-bs-target="#exampleModal" onclick="searchCustomer('setting')">搜尋</button>
+          </div>
+
+          <div id="datatable">
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td class="p-2">客戶id</td>
+                  <td class="p-2" colspan="3">
+                    <input id="id" type="text" class="form-control" placeholder="代表要修改的id，空白代表新增新">
+                  </td>
+                </tr>
+                <tr>
+                  <input id="buyeruuid" type="hidden">
+                  <td class="p-2">名稱<label class="text-danger">*</label></td>
+                  <td>
+                    <input id="name" type="text" class="form-control">
+                  </td>
+                  <td class="p-2">統一編號</td>
+                  <td>
+                    <input id="unum" type="text" class="form-control">
+                  </td>
+                </tr>
+                <tr>
+                  <td class="p-2">手機號碼<label class="text-danger">*</label></td>
+                  <td>
+                    <input id="mobile" type="text" class="form-control">
+                  </td>
+                  <td class="p-2">註記</td>
+                  <td>
+                    <input id="roleremark" type="text" class="form-control">
+                  </td>
+                </tr>
+                <tr>
+                  <td class="p-2">發票接收方式</label></td>
+                  <td colspan="3">
+                    <input class="form-check-input mr-2" type="radio" name="type" id="useentity" value="0" checked>
+                    <label for="useentity">紙本發票</label>
+                    <input class="form-check-input mr-2" type="radio" name="type" id="useemail" value="1">
+                    <label for="useemail">email</label>
+                    <input class="form-check-input mr-2" type="radio" name="type" id="usecarrier" value="2">
+                    <label for="usecarrier">使用載具</label>
+                    <input class="form-check-input mr-2" type="radio" name="type" id="" value="3">
+                    <label for="">會員載具</label>
+                    <input class="form-check-input mr-2" type="radio" name="type" id="donatemark" value="4">
+                    <label for="donatemark">捐贈</label>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="p-2">收件人</td>
+                  <td>
+                    <input id="recipient" type="text" class="form-control">
+                  </td>
+                  <td class="p-2">電話號碼</td>
+                  <td>
+                    <input id="tel" type="text" class="form-control">
+                  </td>
+                </tr>
+                <tr>
+                  <td class="p-2">地址</td>
+                  <td class="p-2" colspan="3">
+                    <input id="address" type="text" class="form-control">
+                  </td>
+                </tr>
+                <tr>
+                  <td class="p-2">電子郵件</td>
+                  <td class="p-2" colspan="3">
+                    <input id="email" type="text" class="form-control">
+                  </td>
+                </tr>
+                <tr>
+                  <td class="p-2">載具條碼</td>
+                  <td class="p-2" colspan="3">
+                    <input id="carrierid" type="text" class="form-control" placeholder="請填寫載具條碼，手機載具8碼、自然人載具16碼。">
+                  </td>
+                </tr>
+                <tr>
+                  <td class="p-2">捐贈碼</td>
+                  <td class="p-2" colspan="3">
+                    <input id="npoban" type="text" class="form-control" placeholder="預設捐給創世基金會">
+                  </td>
+                </tr>
+                <tr>
+                  <td class="p-2">會員編號</td>
+                  <td class="p-2" colspan="3">
+                    <input id="memberid" type="text" class="form-control">
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <button class="btn btn-outline-primary" id="savecustomer" onclick="savecustomer()">儲存</button>
+            <button class="btn btn-outline-danger" id="deletecustomer" onclick="deletecustomer()">刪除</button>
+          </div>
+        </div>
+      </div>
+      </div>
+</body>
+
+</html>

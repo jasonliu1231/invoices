@@ -4,7 +4,6 @@ const { Pool } = require("pg");
 class Conndb {
     async connectpgdb() {
         const conn = process.env;
-        console.log(conn)
         let pool = new Pool({
             user: conn.user,
             host: conn.host,

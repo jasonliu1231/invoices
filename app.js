@@ -9,8 +9,11 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
 const getRouter = require('./routes/get');
+const putRouter = require('./routes/put');
+const postRouter = require('./routes/post');
+const deleteRouter = require('./routes/delete');
+const patchRouter = require('./routes/patch');
 
 const app = express();
 const port = 3000;
@@ -33,7 +36,7 @@ const swaggerOptions = {
       version: '1.0',
     },
   },
-  apis: ['./routes/*.js'], // 要包含在Swagger文檔中的API文件的路徑
+  apis: ['swagger/*.yaml'], // 要包含在Swagger文檔中的API文件的路徑
 };
 
 const specs = swaggerJsdoc(swaggerOptions);
@@ -50,8 +53,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/get', getRouter);
+app.use('/put', putRouter);
+app.use('/post', postRouter);
+app.use('/delete', deleteRouter);
+app.use('/patch', patchRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

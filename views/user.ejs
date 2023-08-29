@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%-include('head') %>
+</head>
+
+<body>
+  <%-include('navbar') %>
+    <%-include('modal') %>
+      <div class="container mt-5">
+        <div class="content p-lg-5 p-sm-2">
+          <h1 class="lh-lg">使用者資料</h1>
+          <div class="accordion mb-3" id="accordionExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                  aria-expanded="true" aria-controls="collapseOne">
+                  使用中
+                </button>
+              </h2>
+              <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                <div id="enabledUser" class="accordion-body">
+
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  停用中
+                </button>
+              </h2>
+              <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div id="disabledUser" class="accordion-body">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="datatable">
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td class="p-2">客戶id</td>
+                  <td class="p-2" colspan="3">
+                    <input id="id" type="text" class="form-control" placeholder="代表要修改的id，空白代表新增新">
+                  </td>
+                </tr>
+                <tr>
+                  <input id="buyeruuid" type="hidden">
+                  <td class="p-2">名稱<label class="text-danger">*</label></td>
+                  <td>
+                    <input id="name" type="text" class="form-control">
+                  </td>
+                  <td class="p-2">狀態</label></td>
+                  <td>
+                    <input class="form-check-input mr-2" type="radio" name="type" id="enabled" value="0" checked>
+                    <label for="enabled">使用中</label>
+                    <input class="form-check-input mr-2" type="radio" name="type" id="disabled" value="1">
+                    <label for="disabled">停用中</label>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="p-2">舊密碼</td>
+                  <td>
+                    <input id="unum" type="text" class="form-control">
+                  </td>
+                  <td class="p-2" colspan="2"><button class="btn btn-outline-secondary btn-sm" id=""
+                      onclick="changePassword()">修改密碼</button></td>
+                </tr>
+                <tr id="newPassword" style="display: none;">
+                  <td class="p-2">新密碼</td>
+                  <td>
+                    <input id="mobile" type="text" class="form-control">
+                  </td>
+                  <td class="p-2">確認密碼</td>
+                  <td>
+                    <input id="roleremark" type="text" class="form-control">
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <h3>權限設定</h3>
+            <div class="accordion mb-3" id="accordionPanelsStayOpenExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
+                    aria-controls="panelsStayOpen-collapseOne">
+                    公司權限
+                  </button>
+                </h2>
+                <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse">
+                  <div class="accordion-body">
+                    <ul class="list-group">
+                      <li class="list-group-item list-group-item-action list-group-item-light">
+                        <input class="form-check-input me-1" type="checkbox" value="" id="companyupdate">
+                        <label class="form-check-label stretched-link" for="companyupdate">修改</label>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseTwo">
+                    商品權限
+                  </button>
+                </h2>
+                <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
+                  <div class="accordion-body">
+                    <ul class="list-group">
+                      <li class="list-group-item list-group-item-action list-group-item-light">
+                        <input class="form-check-input me-1" type="checkbox" value="" id="productsread">
+                        <label class="form-check-label stretched-link" for="productsread">讀取</label>
+                      </li>
+                      <li class="list-group-item list-group-item-action list-group-item-light">
+                        <input class="form-check-input me-1" type="checkbox" value="" id="productscreate">
+                        <label class="form-check-label stretched-link" for="productscreate">寫入</label>
+                      </li>
+                      <li class="list-group-item list-group-item-action list-group-item-light">
+                        <input class="form-check-input me-1" type="checkbox" value="" id="productsupdate">
+                        <label class="form-check-label stretched-link" for="productsupdate">修改</label>
+                      </li>
+                      <li class="list-group-item list-group-item-action list-group-item-light">
+                        <input class="form-check-input me-1" type="checkbox" value="" id="productsdelete">
+                        <label class="form-check-label stretched-link" for="productsdelete">刪除</label>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseThree">
+                    客戶權限
+                  </button>
+                </h2>
+                <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse">
+                  <div class="accordion-body">
+                    <ul class="list-group">
+                      <li class="list-group-item list-group-item-action list-group-item-light">
+                        <input class="form-check-input me-1" type="checkbox" value="" id="customerread">
+                        <label class="form-check-label stretched-link" for="customerread">讀取</label>
+                      </li>
+                      <li class="list-group-item list-group-item-action list-group-item-light">
+                        <input class="form-check-input me-1" type="checkbox" value="" id="customercreate">
+                        <label class="form-check-label stretched-link" for="customercreate">寫入</label>
+                      </li>
+                      <li class="list-group-item list-group-item-action list-group-item-light">
+                        <input class="form-check-input me-1" type="checkbox" value="" id="customerupdate">
+                        <label class="form-check-label stretched-link" for="customerupdate">修改</label>
+                      </li>
+                      <li class="list-group-item list-group-item-action list-group-item-light">
+                        <input class="form-check-input me-1" type="checkbox" value="" id="customerdelete">
+                        <label class="form-check-label stretched-link" for="customerdelete">刪除</label>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseFour">
+                    發票權限
+                  </button>
+                </h2>
+                <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse">
+                  <div class="accordion-body">
+                    <ul class="list-group">
+                      <li class="list-group-item list-group-item-action list-group-item-light">
+                        <input class="form-check-input me-1" type="checkbox" value="" id="invoiceread">
+                        <label class="form-check-label stretched-link" for="invoiceread">讀取</label>
+                      </li>
+                      <li class="list-group-item list-group-item-action list-group-item-light">
+                        <input class="form-check-input me-1" type="checkbox" value="" id="invoicecreate">
+                        <label class="form-check-label stretched-link" for="invoicecreate">寫入</label>
+                      </li>
+                      <li class="list-group-item list-group-item-action list-group-item-light">
+                        <input class="form-check-input me-1" type="checkbox" value="" id="invoiceupdate">
+                        <label class="form-check-label stretched-link" for="invoiceupdate">修改</label>
+                      </li>
+                      <li class="list-group-item list-group-item-action list-group-item-light">
+                        <input class="form-check-input me-1" type="checkbox" value="" id="invoicedelete">
+                        <label class="form-check-label stretched-link" for="invoicedelete">刪除</label>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="true"
+                    aria-controls="panelsStayOpen-collapseFive">
+                    使用者權限
+                  </button>
+                </h2>
+                <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse">
+                  <div class="accordion-body">
+                    <ul class="list-group">
+                      <li class="list-group-item list-group-item-action list-group-item-light">
+                        <input class="form-check-input me-1" type="checkbox" value="" id="usersread">
+                        <label class="form-check-label stretched-link" for="usersread">讀取</label>
+                      </li>
+                      <li class="list-group-item list-group-item-action list-group-item-light">
+                        <input class="form-check-input me-1" type="checkbox" value="" id="userscreate">
+                        <label class="form-check-label stretched-link" for="userscreate">寫入</label>
+                      </li>
+                      <li class="list-group-item list-group-item-action list-group-item-light">
+                        <input class="form-check-input me-1" type="checkbox" value="" id="usersupdate">
+                        <label class="form-check-label stretched-link" for="usersupdate">修改</label>
+                      </li>
+                      <li class="list-group-item list-group-item-action list-group-item-light">
+                        <input class="form-check-input me-1" type="checkbox" value="" id="usersdelete">
+                        <label class="form-check-label stretched-link" for="usersdelete">刪除</label>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-outline-primary" id="savecustomer" onclick="saveuser()">儲存</button>
+            <button class="btn btn-outline-danger" id="deletecustomer" onclick="deleteuser()">刪除</button>
+          </div>
+        </div>
+      </div>
+      </div>
+</body>
+
+</html>

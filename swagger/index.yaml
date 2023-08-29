@@ -1,0 +1,30 @@
+openapi: 3.0.0
+info:
+  title: 電子發票 API
+  version: "1.0"
+
+paths:
+  /login:
+    post:
+      tags:
+        - 登入 / 登出
+      summary: 登入 API
+      description: 帳號密碼登入
+      responses:
+        "200":
+          description: 登入成功
+        "500":
+          description: 登入失敗
+          content:
+            text:
+              example: "帳號密碼錯誤或是該用戶停用中！！"
+
+  /logout:
+    post:
+      tags:
+          - 登入 / 登出
+      summary: 登出 API
+      description: 帳號密碼登入
+      responses:
+        "200":
+          description: 成功

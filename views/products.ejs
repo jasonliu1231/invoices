@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%-include('head') %>
+</head>
+
+<body>
+  <%-include('navbar') %>
+    <div class="container mt-5">
+      <div class="p-lg-5 p-sm-2">
+        <h1 class="lh-lg">產品資訊</h1>
+        <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">產品選單</button>
+
+        <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions"
+          aria-labelledby="offcanvasWithBothOptionsLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">產品列表</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <div class="fs-3 fw-bold text-center" id="errorMsg"></div>
+            <div id="collapseInfo"></div>
+          </div>
+        </div>
+        <div class="mt-4" id="datatable">
+          <table class="table">
+            <tbody>
+              <tr>
+                <td class="p-2">產品id</td>
+                <td class="p-2" colspan="3">
+                  <input id="id" type="text" class="form-control" placeholder="代表要修改的id，空白代表新增新">
+                </td>
+              </tr>
+              <tr>
+                <td class="p-2">名稱<label class="text-danger">*</label></td>
+                <td class="p-2">
+                  <input id="name" type="text" class="form-control">
+                  <input id="uuid" type="hidden">
+                </td>
+                <td class="p-2">類別<label class="text-danger">*</label></td>
+                <td class="p-2">
+                  <input id="category" type="text" class="form-control" list="typelist">
+                  <datalist id="typelist">
+                  </datalist>
+                </td>
+              </tr>
+              <tr>
+                <td class="p-2">編號</td>
+                <td class="p-2">
+                  <input id="no" type="text" class="form-control">
+                </td>
+                <td class="p-2">條碼</td>
+                <td class="p-2">
+                  <input id="barcode" type="text" class="form-control">
+                </td>
+              </tr>
+              <tr>
+                <td class="p-2">單價<label class="text-danger">*</label></td>
+                <td class="p-2">
+                  <input id="price" type="text" class="form-control">
+                  <div style="color: red;">單價為含稅的價錢</div>
+                </td>
+                <td class="p-2">單位</td>
+                <td class="p-2">
+                  <input id="unit" type="text" class="form-control">
+                </td>
+              </tr>
+              <tr>
+                <td class="p-2">備註</td>
+                <td class="p-2" colspan="3">
+                  <input id="remark" type="text" class="form-control">
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <br>
+          <button id="submitbtn" class="btn btn-outline-primary" onclick="saveproduct()">儲存</button>
+          <button class="btn btn-outline-danger" onclick="deleteproduct()">刪除</button>
+        </div>
+      </div>
+    </div>
+</body>
+
+</html>
