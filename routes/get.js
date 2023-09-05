@@ -95,9 +95,6 @@ router.get("/user", async function (req, res, next) {
     const db = new DB();
     const client = await db.connectpgdb();
     try {
-        if (!req.session.permis.usersread) {
-            throw '權限不足！'
-        }
         const get = new Get();
         const result = await get.alluser(client);
         res.send(result);
@@ -113,7 +110,7 @@ router.get("/user/:id", async function (req, res, next) {
     const db = new DB();
     const client = await db.connectpgdb();
     try {
-        if (!req.session.permis.usersread) {
+        if (!req.session.permis.usersread && !(id === req.session.user.id)) {
             throw '權限不足！'
         }
         const get = new Get();

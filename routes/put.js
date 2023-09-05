@@ -66,4 +66,23 @@ router.post("/product/:id", async function (req, res, next) {
     }
 });
 
+router.post("/user/:id", async function (req, res, next) {
+    const body = req.body;
+    const id = req.params.id;
+    const db = new DB();
+    const client = await db.connectpgdb();
+    try {
+        if (!req.session.permis.usersupdate) {
+            throw "權限不足！";
+        }
+        const put = new Put();
+        await put.user(client, body, id);
+        res.send();
+    } catch (err) {
+        res.status(404).send(err);
+    } finally {
+        client.release();
+    }
+});
+
 module.exports = router;

@@ -2,7 +2,7 @@ const crypto = require("crypto");
 class Post {
     async company(client, body) {
         try {
-            let sql = `INSERT INTO seller(
+            const sql = `INSERT INTO seller(
                 unum, name, personincharge, taxid, companyaddress, connectionaddress, tel, facsimilenumber, email, roleremark, printtype, invoicetitleimage, customname)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`;
             const params = [
@@ -28,7 +28,7 @@ class Post {
 
     async customer(client, body) {
         try {
-            let sql = `INSERT INTO customer(
+            const sql = `INSERT INTO customer(
                 id, name, unum, type, recipient, address, tel, email, carrierid, npoban, roleremark, mobile, memberid)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`;
             const params = [
@@ -54,7 +54,7 @@ class Post {
 
     async product(client, body) {
         try {
-            let sql = `INSERT INTO product(
+            const sql = `INSERT INTO product(
                 id, no, name, unit, price, remark, barcode, category)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`;
             const params = [
@@ -65,9 +65,58 @@ class Post {
                 body.price,
                 body.remark,
                 body.barcode,
-                body.category,
+                body.category
             ];
             await client.query(sql, params);
+        } catch (err) {
+            throw "連線資料庫錯誤！原因：" + err;
+        }
+    }
+
+    async user(client, body) {
+        console.log(body)
+        const id = crypto.randomUUID();
+        try {
+            let sql = `SELECT * FROM users WHERE name=$1 `;
+            let params = [body.name];
+            let result = await client.query(sql, params);
+            if (result.rows.length != 0) {
+                throw "名稱已經存在！";
+            }
+            client.query("BEGIN");
+            sql = `INSERT INTO users(
+                id, name, password, disabled)
+                VALUES ($1, $2, $3, $4)`;
+            params = [id, body.name, body.password, body.type];
+            await client.query(sql, params);
+            sql = `INSERT INTO permis(
+                userid, companyupdate, customercreate, customerupdate, customerread, customerdelete, 
+                productscreate, productsupdate, productsread, productsdelete, 
+                invoicecreate, invoiceupdate, invoiceread, invoicedelete, 
+                userscreate, usersupdate, usersread, usersdelete)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)`;
+            params = [
+                id,
+                body.companyupdate,
+                body.customercreate,
+                body.customerupdate,
+                body.customerread,
+                body.customerdelete,
+                body.productscreate,
+                body.productsupdate,
+                body.productsread,
+                body.productsdelete,
+                body.invoicecreate,
+                body.invoiceupdate,
+                body.invoiceread,
+                body.invoicedelete,
+                body.userscreate,
+                body.usersupdate,
+                body.usersread,
+                body.usersdelete
+            ];
+            await client.query(sql, params);
+            client.query("COMMIT");
         } catch (err) {
             throw "連線資料庫錯誤！原因：" + err;
         }

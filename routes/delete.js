@@ -39,4 +39,22 @@ router.get("/product/:id", async function (req, res, next) {
     }
 });
 
+router.get("/user/:id", async function (req, res, next) {
+    const id = req.params.id;
+    const db = new DB();
+    const client = await db.connectpgdb();
+    try {
+        if (!req.session.permis.usersdelete) {
+            throw '權限不足！'
+        }
+        const deletedata = new Delete();
+        await deletedata.user(client, id);
+        res.send();
+    } catch (error) {
+        res.status(404).send(error);
+    } finally {
+        client.release();
+    }
+});
+
 module.exports = router;

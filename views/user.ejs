@@ -53,6 +53,12 @@
                   <td>
                     <input id="name" type="text" class="form-control">
                   </td>
+                  <td class="p-2">密碼</td>
+                  <td>
+                    <input id="password" type="text" class="form-control" placeholder="新增使用者請填寫該欄位！">
+                  </td>
+                </tr>
+                <tr>
                   <td class="p-2">狀態</label></td>
                   <td>
                     <input class="form-check-input mr-2" type="radio" name="type" id="enabled" value="0" checked>
@@ -60,23 +66,17 @@
                     <input class="form-check-input mr-2" type="radio" name="type" id="disabled" value="1">
                     <label for="disabled">停用中</label>
                   </td>
-                </tr>
-                <tr>
-                  <td class="p-2">舊密碼</td>
-                  <td>
-                    <input id="unum" type="text" class="form-control">
-                  </td>
                   <td class="p-2" colspan="2"><button class="btn btn-outline-secondary btn-sm" id=""
                       onclick="changePassword()">修改密碼</button></td>
                 </tr>
                 <tr id="newPassword" style="display: none;">
                   <td class="p-2">新密碼</td>
                   <td>
-                    <input id="mobile" type="text" class="form-control">
+                    <input id="nwepass" type="text" class="form-control">
                   </td>
                   <td class="p-2">確認密碼</td>
                   <td>
-                    <input id="roleremark" type="text" class="form-control">
+                    <input id="checkedpass" type="text" class="form-control">
                   </td>
                 </tr>
               </tbody>
