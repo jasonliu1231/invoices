@@ -2,11 +2,11 @@ class Get {
     async login(client, body) {
         try {
             const sql = `SELECT 
-                            id, u.name name, companyupdate, customercreate, customerupdate, customerread, customerdelete, productscreate, 
+                            id, u.name AS name, companyupdate, customercreate, customerupdate, customerread, customerdelete, productscreate, 
                             productsupdate, productsread, productsdelete, invoicecreate, invoiceupdate, invoiceread, invoicedelete, 
                             userscreate, usersupdate, usersread, usersdelete, unum 
-                        FROM users u
-                        LEFT JOIN permis p ON u.id=p.userid 
+                        FROM users AS u
+                        LEFT JOIN permis AS p ON u.id=p.userid 
                         LEFT JOIN seller ON 1=1 
                         WHERE u.name=$1 AND password=$2 AND disabled=$3`;
             const params = [body.user, body.password, 0];
