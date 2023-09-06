@@ -20,7 +20,8 @@ router.get(
         "/mediafile",
         "/updateinvoice",
         "/invoiceadmin",
-        "/searchInvoiceCount"
+        "/searchInvoiceCount",
+        "/user"
     ],
     async (req, res) => {
         // if (!!req.session.user) {
@@ -33,10 +34,6 @@ router.get(
         res.render(template, { title: template, session: req.session });
     }
 );
-
-router.get("/user", function (req, res, next) {
-    res.render("user", { title: "user", session: req.session });
-});
 
 router.post("/login", async function (req, res, next) {
     const body = req.body;
