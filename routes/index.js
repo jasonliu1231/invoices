@@ -17,7 +17,6 @@ router.get(
         "/voidcnote",
         "/b2cinvoice",
         "/search",
-        // "/user",
         "/mediafile",
         "/updateinvoice",
         "/invoiceadmin",
