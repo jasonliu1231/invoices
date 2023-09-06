@@ -24,13 +24,14 @@ router.get(
         "/searchInvoiceCount"
     ],
     async (req, res) => {
-        console.log(!!req.session.user)
-        if (!!req.session.user) {
-            const template = req.path.slice(1);
-            res.render(template, { title: template, session: req.session });
-        } else {
-            res.render("index", { title: "index" });
-        }
+        // if (!!req.session.user) {
+        //     const template = req.path.slice(1);
+        //     res.render(template, { title: template, session: req.session });
+        // } else {
+        //     res.render("index", { title: "index" });
+        // }
+        const template = req.path.slice(1);
+        res.render(template, { title: template, session: req.session });
     }
 );
 
