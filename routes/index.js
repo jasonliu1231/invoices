@@ -34,9 +34,9 @@ router.get(
     }
 );
 
-router.get("/user", async () => {
-    res.render("user", { title: template, session: req.session });
-})
+router.get("/user", function (req, res, next) {
+    res.render("user", { title: "user", session: req.session });
+});
 
 router.post("/login", async function (req, res, next) {
     const body = req.body;
