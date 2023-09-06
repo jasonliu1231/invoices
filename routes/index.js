@@ -24,7 +24,8 @@ router.get(
         "/searchInvoiceCount"
     ],
     async (req, res) => {
-        if (req.session.user) {
+        console.log(!!req.session.user)
+        if (!!req.session.user) {
             const template = req.path.slice(1);
             res.render(template, { title: template, session: req.session });
         } else {
