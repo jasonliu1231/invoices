@@ -17,7 +17,7 @@ router.get(
         "/voidcnote",
         "/b2cinvoice",
         "/search",
-        "/user",
+        // "/user",
         "/mediafile",
         "/updateinvoice",
         "/invoiceadmin",
@@ -34,6 +34,10 @@ router.get(
         res.render(template, { title: template, session: req.session });
     }
 );
+
+router.get("/user", async () => {
+    res.render("user", { title: template, session: req.session });
+})
 
 router.post("/login", async function (req, res, next) {
     const body = req.body;
