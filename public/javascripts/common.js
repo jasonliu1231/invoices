@@ -1,3 +1,16 @@
+$(async function () {
+    const token = localStorage.getItem("token");
+    $("#userName").html("使用者：" + localStorage.getItem("name"));
+    $("#companyLink").attr("href", `/company/${token}`);
+    $("#productsLink").attr("href", `/products/${token}`);
+    $("#customerLink").attr("href", `/customer/${token}`);
+    $("#userLink").attr("href", `/user/${token}`);
+    $("#logoutLink").attr("href", `/logout/${token}`);
+    $("#trackLink").attr("href", `/track/${token}`);
+
+
+});
+
 function theadTransition(column) {
     switch (column) {
         case "id":
@@ -55,23 +68,29 @@ function selsetItem() {
     const checked = $("#modalTable tbody .table-success").children();
     checked.each((index, item) => {
         const id = $(item).attr("data-name");
-        if (id === 'type') {
+        if (id === "type") {
             const radio = $("input[name='type']");
             radio.each((index, element) => {
-                $(element).val() === $(item).html() && $(element).prop("checked", true);
-            })
+                $(element).val() === $(item).html() &&
+                    $(element).prop("checked", true);
+            });
         }
-        $(`#${id}`).val($(item).html())
+        $(`#${id}`).val($(item).html());
     });
 }
 
 async function searchCustomer(from) {
-    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+    const popoverTriggerList = document.querySelectorAll(
+        '[data-bs-toggle="popover"]'
+    );
+    const popoverList = [...popoverTriggerList].map(
+        (popoverTriggerEl) => new bootstrap.Popover(popoverTriggerEl)
+    );
+    const userid = localStorage.getItem("id");
     $("#modalLabel").html("客戶列表");
     $("#loadingAction").show();
     const condition = $("#condition").val() || null;
-    let url = "/get/customer";
+    let url = `/get/customer/${userid}`;
     if (condition) {
         url += `/${from}?condition=${condition}`;
     }
@@ -99,16 +118,20 @@ async function searchCustomer(from) {
                 tbody.forEach((val, index) => {
                     tbodyHtml += `<th class="text-nowrap text-truncate" style="max-width: 70px" data-name=${
                         thead[index]
-                    } data-toggle="tooltip" title="${thead[index] === 'type' ? customerTypeTransition(val) : val}">${
-                        val ? val : ""
-                    }</th>`;
+                    } data-toggle="tooltip" title="${
+                        thead[index] === "type"
+                            ? customerTypeTransition(val)
+                            : val
+                    }">${val ? val : ""}</th>`;
                 });
                 tbodyHtml += "</tr>";
             });
             $("#modalTable tbody").html(tbodyHtml);
         }
     } else {
+        $("#loadingAction").hide();
         const errmsg = await response.text();
-        alert(errmsg);
+        $("#modalTable").hide();
+        $("#modalMsg").show().html(errmsg);
     }
 }

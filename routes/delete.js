@@ -2,14 +2,19 @@ let express = require("express");
 let router = express.Router();
 const DB = require("../controller/conndb.js");
 const Delete = require("../controller/delete.js");
+const Common = require("../controller/common.js");
 
-router.get("/customer/:id", async function (req, res, next) {
+router.get("/customer/:userid/:id", async function (req, res, next) {
+    const userid = req.params.userid;
     const id = req.params.id;
     const db = new DB();
     const client = await db.connectpgdb();
     try {
-        if (!req.session.permis.customerdelete) {
-            throw '權限不足！'
+        // 檢查權限
+        const common = new Common();
+        let result = await common.permis(client, userid);
+        if (!result.customerdelete) {
+            throw "權限不足";
         }
         const deletedata = new Delete();
         await deletedata.customer(client, id);
@@ -21,13 +26,17 @@ router.get("/customer/:id", async function (req, res, next) {
     }
 });
 
-router.get("/product/:id", async function (req, res, next) {
+router.get("/product/:userid/:id", async function (req, res, next) {
+    const userid = req.params.userid;
     const id = req.params.id;
     const db = new DB();
     const client = await db.connectpgdb();
     try {
-        if (!req.session.permis.productsdelete) {
-            throw '權限不足！'
+        // 檢查權限
+        const common = new Common();
+        let result = await common.permis(client, userid);
+        if (!result.productsdelete) {
+            throw "權限不足";
         }
         const deletedata = new Delete();
         await deletedata.product(client, id);
@@ -39,13 +48,17 @@ router.get("/product/:id", async function (req, res, next) {
     }
 });
 
-router.get("/user/:id", async function (req, res, next) {
+router.get("/user/:userid/:id", async function (req, res, next) {
+    const userid = req.params.userid;
     const id = req.params.id;
     const db = new DB();
     const client = await db.connectpgdb();
     try {
-        if (!req.session.permis.usersdelete) {
-            throw '權限不足！'
+        // 檢查權限
+        const common = new Common();
+        let result = await common.permis(client, userid);
+        if (!result.usersdelete) {
+            throw "權限不足";
         }
         const deletedata = new Delete();
         await deletedata.user(client, id);

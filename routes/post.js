@@ -2,14 +2,19 @@ let express = require("express");
 let router = express.Router();
 const DB = require("../controller/conndb.js");
 const Post = require("../controller/post.js");
+const Common = require("../controller/common.js");
 
-router.post("/customer", async function (req, res, next) {
+router.post("/customer/:userid", async function (req, res, next) {
+    const userid = req.params.userid;
     const body = req.body;
     const db = new DB();
     const client = await db.connectpgdb();
     try {
-        if (!req.session.permis.customercreate) {
-            throw "權限不足！";
+        // 檢查權限
+        const common = new Common();
+        let result = await common.permis(client, userid);
+        if (!result.customercreate) {
+            throw "權限不足";
         }
         const post = new Post();
         await post.customer(client, body);
@@ -21,13 +26,17 @@ router.post("/customer", async function (req, res, next) {
     }
 });
 
-router.post("/product", async function (req, res, next) {
+router.post("/product/:userid", async function (req, res, next) {
+    const userid = req.params.userid;
     const body = req.body;
     const db = new DB();
     const client = await db.connectpgdb();
     try {
-        if (!req.session.permis.productscreate) {
-            throw "權限不足！";
+        // 檢查權限
+        const common = new Common();
+        let result = await common.permis(client, userid);
+        if (!result.productscreate) {
+            throw "權限不足";
         }
         const post = new Post();
         await post.product(client, body);
@@ -39,13 +48,17 @@ router.post("/product", async function (req, res, next) {
     }
 });
 
-router.post("/user", async function (req, res, next) {
+router.post("/user/:userid", async function (req, res, next) {
+    const userid = req.params.userid;
     const body = req.body;
     const db = new DB();
     const client = await db.connectpgdb();
     try {
-        if (!req.session.permis.userscreate) {
-            throw "權限不足！";
+        // 檢查權限
+        const common = new Common();
+        let result = await common.permis(client, userid);
+        if (!result.userscreate) {
+            throw "權限不足";
         }
         const post = new Post();
         await post.user(client, body);

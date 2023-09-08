@@ -1,5 +1,6 @@
 $(async function () {
-    const response = await fetch(`/get/product`);
+    const userid = localStorage.getItem("id");
+    const response = await fetch(`/get/product/${userid}`);
     if (!response.ok) {
         const errmsg = await response.text();
         $("#errorMsg").html(errmsg);
@@ -39,7 +40,8 @@ $(async function () {
 });
 
 async function selectproduct(id) {
-    const response = await fetch(`/get/product/${id}`);
+    const userid = localStorage.getItem("id");
+    const response = await fetch(`/get/product/${userid}/${id}`);
     if (!response.ok) {
         const errmsg = await response.text();
         alert(errmsg);
@@ -78,6 +80,8 @@ function getSettingVal() {
 }
 
 async function saveproduct() {
+    const token = localStorage.getItem("token");
+    const userid = localStorage.getItem("id");
     const productsInfo = getSettingVal();
     if (!productsInfo.name || !productsInfo.category || !productsInfo.price) {
         !productsInfo.name
@@ -95,9 +99,9 @@ async function saveproduct() {
 
     let url = "";
     if (!productsInfo.id) {
-        url = "/post/product";
+        url = `/post/product/${userid}`;
     } else {
-        url = `/put/product/${productsInfo.id}`;
+        url = `/put/product/${userid}/${productsInfo.id}`;
     }
 
     const config = {
@@ -112,11 +116,14 @@ async function saveproduct() {
         const errmsg = await response.text();
         alert(errmsg);
         return;
+    } else {
+        window.location.href = `../products/${token}`;
     }
-    window.location.href = "products";
 }
 
 async function deleteproduct() {
+    const token = localStorage.getItem("token");
+    const userid = localStorage.getItem("id");
     const id = $("#id").val() || null;
     if (!id || id.length != 36) {
         alert("刪除請填寫完整的產品id");
@@ -126,11 +133,11 @@ async function deleteproduct() {
 
     const check = confirm("確定要刪除嗎？");
     if (check) {
-        const response = await fetch(`/delete/product/${id}`);
+        const response = await fetch(`/delete/product/${userid}/${id}`);
         if (!response.ok) {
             const errmsg = await response.text();
             alert(errmsg);
         }
-        window.location.href = "products";
+        window.location.href = `../products/${token}`;
     }
 }

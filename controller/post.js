@@ -74,7 +74,7 @@ class Post {
     }
 
     async user(client, body) {
-        console.log(body)
+        console.log(body);
         const id = crypto.randomUUID();
         try {
             let sql = `SELECT * FROM users WHERE name=$1 `;

@@ -5,6 +5,7 @@ $(async function () {
         $("#errorMsg").html(errmsg);
     }
 
+    const userid = localStorage.getItem("id");
     const data = await response.json();
     data.forEach((user) => {
         const div = $(
@@ -12,12 +13,12 @@ $(async function () {
         );
         if (user.disabled === "0") {
             div.append(
-                `<a href="#" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">${user.name}</a>`
+                `<a href="#" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover ${user.id === userid && 'fs-5 text-success'}">${user.name}</a>`
             );
             $("#enabledUser").append(div);
         } else {
             div.append(
-                `<a href="#" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">${user.name}</a>`
+                `<a href="#" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover ${user.id === userid && 'fs-5 text-success'}">${user.name}</a>`
             );
             $("#disabledUser").append(div);
         }
@@ -25,7 +26,8 @@ $(async function () {
 });
 
 async function selectuser(id) {
-    const response = await fetch(`/get/user/${id}`);
+    const userid = localStorage.getItem("id");
+    const response = await fetch(`/get/user/${userid}/${id}`);
     if (!response.ok) {
         const errmsg = await response.text();
         alert(errmsg);
@@ -89,7 +91,7 @@ async function selectuser(id) {
 
 function changePassword() {
     const id = $("#id").val();
-    const userid = $("#loginUser").attr("data-userid");
+    const userid = localStorage.getItem("id");
     if (id != userid) {
         alert("非本人無法修改密碼！");
         return;
@@ -143,13 +145,14 @@ function getSettingVal() {
 }
 
 async function saveuser() {
+    const token = localStorage.getItem("token");
+    const userid = localStorage.getItem("id");
     const userInfo = getSettingVal();
-    const userid = $("#loginUser").attr("data-userid");
     const password = $("#password").val() || null;
     const nwepass = $("#nwepass").val() || null;
     const checkedpass = $("#checkedpass").val() || null;
 
-    let url = `/put/user/${userInfo.id}`;
+    let url = `/put/user/${userid}/${userInfo.id}`;
     // 如果有填寫密碼，代表要新增使用者
     if (!userInfo.id) {
         if (!password || !userInfo.name) {
@@ -163,7 +166,7 @@ async function saveuser() {
             return;
         }
         userInfo.password = password;
-        url = "/post/user";
+        url = `/post/user/${userid}`;
     }
 
     const config = {
@@ -184,9 +187,9 @@ async function saveuser() {
     if (nwepass) {
         if (userInfo.id && userInfo.id != userid) {
             alert("非本人無法修改密碼！");
-            window.location.href = "user";
+            window.location.href = `../user/${token}`;
         }
-        url = `/patch/user/${userInfo.id}`;
+        url = `/patch/user/${userid}/${userInfo.id}`;
         if (nwepass != checkedpass) {
             alert("修改密碼與確認密碼不一致");
             $("#nwepass").addClass("border-danger");
@@ -203,13 +206,15 @@ async function saveuser() {
             alert(errmsg);
             return;
         }
-        window.location.href = "user";
+        window.location.href = `../user/${token}`;
     } else {
-        window.location.href = "user";
+        window.location.href = `../user/${token}`;
     }
 }
 
 async function deleteuser() {
+    const token = localStorage.getItem("token");
+    const userid = localStorage.getItem("id");
     const id = $("#id").val() || null;
     if (!id || id.length != 36) {
         alert("刪除請填寫完整的使用者id");
@@ -219,11 +224,11 @@ async function deleteuser() {
 
     const check = confirm("確定要刪除嗎？");
     if (check) {
-        const response = await fetch(`/delete/user/${id}`);
+        const response = await fetch(`/delete/user/${userid}/${id}`);
         if (!response.ok) {
             const errmsg = await response.text();
             alert(errmsg);
         }
-        window.location.href = "user";
+        window.location.href = `../user/${token}`;
     }
 }

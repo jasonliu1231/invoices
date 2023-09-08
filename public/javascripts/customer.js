@@ -44,10 +44,12 @@ async function savecustomer() {
     }
 
     let url = "";
+    const token = localStorage.getItem("token");
+    const userid = localStorage.getItem("id");
     if (!customerInfo.id) {
-        url = "/post/customer";
+        url = `/post/customer/${userid}`;
     } else {
-        url = `/put/customer/${customerInfo.id}`;
+        url = `/put/customer/${userid}/${customerInfo.id}`;
     }
 
     const config = {
@@ -61,8 +63,9 @@ async function savecustomer() {
     if (!response.ok) {
         const errmsg = await response.text();
         alert(errmsg);
+    } else {
+        window.location.href = `../customer/${token}`;
     }
-    window.location.href = "customer";
 }
 
 async function deletecustomer() {
@@ -74,13 +77,15 @@ async function deletecustomer() {
     }
 
     const check = confirm("確定要刪除嗎？");
+    const token = localStorage.getItem("token");
+    const userid = localStorage.getItem("id");
     if (check) {
-        const response = await fetch(`/delete/customer/${id}`);
+        const response = await fetch(`/delete/customer/${userid}/${id}`);
         if (!response.ok) {
             const errmsg = await response.text();
             alert(errmsg);
             return;
         }
-        window.location.href = "customer";
+        window.location.href = `../customer/${token}`;
     }
 }

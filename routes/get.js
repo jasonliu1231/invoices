@@ -2,6 +2,7 @@ let express = require("express");
 let router = express.Router();
 const DB = require("../controller/conndb.js");
 const Get = require("../controller/get.js");
+const Common = require("../controller/common.js");
 
 router.get("/company", async function (req, res, next) {
     const db = new DB();
@@ -17,15 +18,19 @@ router.get("/company", async function (req, res, next) {
     }
 });
 
-router.get("/customer", async function (req, res, next) {
+router.get("/customer/:userid", async function (req, res, next) {
+    const userid = req.params.userid;
     const db = new DB();
     const client = await db.connectpgdb();
     try {
-        if (!req.session.permis.customerread) {
-            throw '權限不足！'
+        // 檢查權限
+        const common = new Common();
+        let result = await common.permis(client, userid);
+        if (!result.customerread) {
+            throw "權限不足";
         }
         const get = new Get();
-        const result = await get.allCustomer(client);
+        result = await get.allCustomer(client);
         res.send(result);
     } catch (error) {
         res.status(404).send(error);
@@ -34,15 +39,19 @@ router.get("/customer", async function (req, res, next) {
     }
 });
 
-router.get("/customer/:from", async function (req, res, next) {
+router.get("/customer/:userid/:from", async function (req, res, next) {
+    const userid = req.params.userid;
     const from = req.params.from;
     const condition = req.query.condition;
     const db = new DB();
     const client = await db.connectpgdb();
     let result;
     try {
-        if (!req.session.permis.customerread) {
-            throw '權限不足！'
+        // 檢查權限
+        const common = new Common();
+        result = await common.permis(client, userid);
+        if (!result.customerread) {
+            throw "權限不足";
         }
         const get = new Get();
         if (from === "setting") {
@@ -56,15 +65,20 @@ router.get("/customer/:from", async function (req, res, next) {
     }
 });
 
-router.get("/product", async function (req, res, next) {
+router.get("/product/:userid", async function (req, res, next) {
+    const userid = req.params.userid;
     const db = new DB();
     const client = await db.connectpgdb();
     try {
-        if (!req.session.permis.productsread) {
-            throw '權限不足！'
+        // 檢查權限
+        const common = new Common();
+        let result = await common.permis(client, userid);
+        console.log(result)
+        if (!result.productsread) {
+            throw "權限不足";
         }
         const get = new Get();
-        const result = await get.allproducts(client);
+        result = await get.allproducts(client);
         res.send(result);
     } catch (error) {
         res.status(404).send(error);
@@ -73,16 +87,20 @@ router.get("/product", async function (req, res, next) {
     }
 });
 
-router.get("/product/:id", async function (req, res, next) {
+router.get("/product/:userid/:id", async function (req, res, next) {
+    const userid = req.params.userid;
     const id = req.params.id;
     const db = new DB();
     const client = await db.connectpgdb();
     try {
-        if (!req.session.permis.productsread) {
-            throw '權限不足！'
+        // 檢查權限
+        const common = new Common();
+        let result = await common.permis(client, userid);
+        if (!result.productsread) {
+            throw "權限不足";
         }
         const get = new Get();
-        let result = await get.product(client, id);
+        result = await get.product(client, id);
         res.send(result);
     } catch (error) {
         res.status(404).send(error);
@@ -105,16 +123,20 @@ router.get("/user", async function (req, res, next) {
     }
 });
 
-router.get("/user/:id", async function (req, res, next) {
+router.get("/user/:userid/:id", async function (req, res, next) {
+    const userid = req.params.userid;
     const id = req.params.id;
     const db = new DB();
     const client = await db.connectpgdb();
     try {
-        if (!req.session.permis.usersread && !(id === req.session.user.id)) {
-            throw '權限不足！'
+        // 檢查權限
+        const common = new Common();
+        let result = await common.permis(client, userid);
+        if (!result.usersread && userid != id) {
+            throw "權限不足";
         }
         const get = new Get();
-        let result = await get.user(client, id);
+        result = await get.user(client, id);
         res.send(result);
     } catch (error) {
         res.status(404).send(error);

@@ -162,10 +162,13 @@ async function saveCompany() {
         },
         body: JSON.stringify(companyInfo)
     };
-    const response = await fetch("/put/company", config);
+    const token = localStorage.getItem("token");
+    const userid = localStorage.getItem("id");
+    const response = await fetch(`/put/company/${userid}`, config);
     if (!response.ok) {
         const errmsg = await response.text();
         alert(errmsg);
+    } else {
+        window.location.href = `../company/${token}`;
     }
-    window.location.href = "company";
 }
