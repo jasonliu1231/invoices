@@ -64,7 +64,7 @@ async function savecustomer() {
         const errmsg = await response.text();
         alert(errmsg);
     } else {
-        window.location.href = `../customer/${token}`;
+        window.location.href = `/customer/${token}`;
     }
 }
 
@@ -86,6 +86,6 @@ async function deletecustomer() {
             alert(errmsg);
             return;
         }
-        window.location.href = `../customer/${token}`;
+        window.location.href = `/customer/${token}`;
     }
 }

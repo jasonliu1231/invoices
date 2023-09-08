@@ -117,7 +117,7 @@ async function saveproduct() {
         alert(errmsg);
         return;
     } else {
-        window.location.href = `../products/${token}`;
+        window.location.href = `/products/${token}`;
     }
 }
 
@@ -138,6 +138,6 @@ async function deleteproduct() {
             const errmsg = await response.text();
             alert(errmsg);
         }
-        window.location.href = `../products/${token}`;
+        window.location.href = `/products/${token}`;
     }
 }

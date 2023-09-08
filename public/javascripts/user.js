@@ -187,7 +187,7 @@ async function saveuser() {
     if (nwepass) {
         if (userInfo.id && userInfo.id != userid) {
             alert("非本人無法修改密碼！");
-            window.location.href = `../user/${token}`;
+            window.location.href = `/user/${token}`;
         }
         url = `/patch/user/${userid}/${userInfo.id}`;
         if (nwepass != checkedpass) {
@@ -206,9 +206,9 @@ async function saveuser() {
             alert(errmsg);
             return;
         }
-        window.location.href = `../user/${token}`;
+        window.location.href = `/user/${token}`;
     } else {
-        window.location.href = `../user/${token}`;
+        window.location.href = `/user/${token}`;
     }
 }
 
@@ -229,6 +229,6 @@ async function deleteuser() {
             const errmsg = await response.text();
             alert(errmsg);
         }
-        window.location.href = `../user/${token}`;
+        window.location.href = `/user/${token}`;
     }
 }
