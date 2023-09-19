@@ -145,4 +145,25 @@ router.get("/user/:userid/:id", async function (req, res, next) {
     }
 });
 
+router.get("/track", async function (req, res, next) {
+    const userid = req.headers['userid'];
+    const db = new DB();
+    const client = await db.connectpgdb();
+    try {
+        // 檢查權限
+        const common = new Common();
+        let result = await common.permis(client, userid);
+        if (!result.invoiceread) {
+            throw "權限不足";
+        }
+        const get = new Get();
+        result = await get.track(client);
+        res.send(result);
+    } catch (error) {
+        res.status(404).send(error);
+    } finally {
+        client.release();
+    }
+});
+
 module.exports = router;

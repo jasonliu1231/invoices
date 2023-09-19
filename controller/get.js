@@ -89,6 +89,28 @@ class Get {
             throw "連線資料庫錯誤！原因：" + err;
         }
     }
+
+    async track(client) {
+        // 只顯示當期跟前期
+        const currentDate = new Date();
+        let month = 0;
+        if (currentDate.getMonth() % 2 === 0) {
+            month = currentDate.getMonth() + 2;
+        } else {
+            month = currentDate.getMonth() + 1;
+        }
+        // getFullYear 因為是西元年減去 1911 要再乘以 100 來加上月份
+        const current = (currentDate.getFullYear() - 1911) * 100 + month;
+        const last = current - 2;
+        try {
+            const sql = `SELECT id, type, yearmonth, tnum, beginno, endno, usedno, disabled FROM track WHERE yearmonth=$1 OR yearmonth=$2`;
+            const params = [current, last];
+            const result = await client.query(sql, params);
+            return result.rows;
+        } catch (err) {
+            throw "連線資料庫錯誤！原因：" + err;
+        }
+    }
 }
 
 module.exports = Get;

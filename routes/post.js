@@ -70,4 +70,26 @@ router.post("/user/:userid", async function (req, res, next) {
     }
 });
 
+router.post("/track", async function (req, res, next) {
+    const userid = req.headers['userid'];
+    const body = req.body;
+    const db = new DB();
+    const client = await db.connectpgdb();
+    try {
+        // 檢查權限
+        const common = new Common();
+        let result = await common.permis(client, userid);
+        if (!result.invoicecreate) {
+            throw "權限不足";
+        }
+        const post = new Post();
+        await post.track(client, body);
+        res.send();
+    } catch (error) {
+        res.status(404).send(error);
+    } finally {
+        client.release();
+    }
+});
+
 module.exports = router;

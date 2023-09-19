@@ -9,3 +9,7 @@ a {
 .collapseText:hover {
   color: #00B7FF;
 }
+
+.table-hover tbody tr:hover {
+  background-color: #ffcccc; /* 你希望的顏色 */
+}

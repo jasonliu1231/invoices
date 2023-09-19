@@ -169,6 +169,6 @@ async function saveCompany() {
         const errmsg = await response.text();
         alert(errmsg);
     } else {
-        window.location.href = `../company/${token}`;
+        window.location.href = `/company/${token}`;
     }
 }

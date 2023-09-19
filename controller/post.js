@@ -74,7 +74,6 @@ class Post {
     }
 
     async user(client, body) {
-        console.log(body);
         const id = crypto.randomUUID();
         try {
             let sql = `SELECT * FROM users WHERE name=$1 `;
@@ -117,6 +116,45 @@ class Post {
             ];
             await client.query(sql, params);
             client.query("COMMIT");
+        } catch (err) {
+            throw "連線資料庫錯誤！原因：" + err;
+        }
+    }
+
+    async track(client, body) {
+        try {
+            for (let i = 0; i < body.length; i++) {
+                const id = crypto.randomUUID();
+                const track = body[i];
+                let sql = `SELECT * FROM seller WHERE unum=$1 `;
+                let params = [track.unum];
+                let result = await client.query(sql, params);
+                if (result.rows.length === 0) {
+                    throw "非公司發票，請確認是否為公司統編！";
+                }
+                const date = track.yearmonth;
+
+                const yearmonth = date.split("~")[1].trim().replace("/", "");
+                sql = `SELECT * FROM track WHERE yearmonth=$1 AND tnum=$2 AND beginno=$3 AND endno=$4 `;
+                params = [yearmonth, track.tnum, track.beginno, track.endno];
+                result = await client.query(sql, params);
+                if (result.rows.length != 0) {
+                    throw `${track.tnum}${track.beginno} ~ ${track.tnum}${track.endno} 此組已經存在！`;
+                }
+                sql = `INSERT INTO track(id, type, yearmonth, tnum, beginno, endno, usedno, disabled)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`;
+                params = [
+                    id,
+                    track.type,
+                    yearmonth,
+                    track.tnum,
+                    track.beginno,
+                    track.endno,
+                    null,
+                    0
+                ];
+                await client.query(sql, params);
+            }
         } catch (err) {
             throw "連線資料庫錯誤！原因：" + err;
         }
