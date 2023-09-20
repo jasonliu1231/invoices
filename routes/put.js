@@ -6,8 +6,8 @@ const Put = require("../controller/put.js");
 const Post = require("../controller/post.js");
 const Common = require("../controller/common.js");
 
-router.post("/company/:userid", async function (req, res, next) {
-    const userid = req.params.userid;
+router.post("/company", async function (req, res, next) {
+    const userid = req.headers['userid'];
     const body = req.body;
     const db = new DB();
     const client = await db.connectpgdb();
@@ -36,8 +36,8 @@ router.post("/company/:userid", async function (req, res, next) {
     }
 });
 
-router.post("/customer/:userid/:id", async function (req, res, next) {
-    const userid = req.params.userid;
+router.post("/customer/:id", async function (req, res, next) {
+    const userid = req.headers['userid'];
     const body = req.body;
     const id = req.params.id;
     const db = new DB();
@@ -63,8 +63,8 @@ router.post("/customer/:userid/:id", async function (req, res, next) {
     }
 });
 
-router.post("/product/:userid/:id", async function (req, res, next) {
-    const userid = req.params.userid;
+router.post("/product/:id", async function (req, res, next) {
+    const userid = req.headers['userid'];
     const body = req.body;
     const id = req.params.id;
     const db = new DB();
@@ -90,8 +90,8 @@ router.post("/product/:userid/:id", async function (req, res, next) {
     }
 });
 
-router.post("/user/:userid/:id", async function (req, res, next) {
-    const userid = req.params.userid;
+router.post("/user/:id", async function (req, res, next) {
+    const userid = req.headers['userid'];
     const body = req.body;
     const id = req.params.id;
     const db = new DB();

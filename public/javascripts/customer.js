@@ -47,15 +47,16 @@ async function savecustomer() {
     const token = localStorage.getItem("token");
     const userid = localStorage.getItem("id");
     if (!customerInfo.id) {
-        url = `/post/customer/${userid}`;
+        url = `/post/customer`;
     } else {
-        url = `/put/customer/${userid}/${customerInfo.id}`;
+        url = `/put/customer/${customerInfo.id}`;
     }
 
     const config = {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            userid: userid
         },
         body: JSON.stringify(customerInfo)
     };
@@ -80,7 +81,14 @@ async function deletecustomer() {
     const token = localStorage.getItem("token");
     const userid = localStorage.getItem("id");
     if (check) {
-        const response = await fetch(`/delete/customer/${userid}/${id}`);
+        const config = {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                userid: userid
+            }
+        };
+        const response = await fetch(`/delete/customer/${id}`, config);
         if (!response.ok) {
             const errmsg = await response.text();
             alert(errmsg);

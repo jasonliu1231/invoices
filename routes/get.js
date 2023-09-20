@@ -18,8 +18,8 @@ router.get("/company", async function (req, res, next) {
     }
 });
 
-router.get("/customer/:userid", async function (req, res, next) {
-    const userid = req.params.userid;
+router.get("/customer", async function (req, res, next) {
+    const userid = req.headers['userid'];
     const db = new DB();
     const client = await db.connectpgdb();
     try {
@@ -39,8 +39,8 @@ router.get("/customer/:userid", async function (req, res, next) {
     }
 });
 
-router.get("/customer/:userid/:from", async function (req, res, next) {
-    const userid = req.params.userid;
+router.get("/customer/:from", async function (req, res, next) {
+    const userid = req.headers['userid'];
     const from = req.params.from;
     const condition = req.query.condition;
     const db = new DB();
@@ -65,15 +65,14 @@ router.get("/customer/:userid/:from", async function (req, res, next) {
     }
 });
 
-router.get("/product/:userid", async function (req, res, next) {
-    const userid = req.params.userid;
+router.get("/product", async function (req, res, next) {
+    const userid = req.headers['userid'];
     const db = new DB();
     const client = await db.connectpgdb();
     try {
         // 檢查權限
         const common = new Common();
         let result = await common.permis(client, userid);
-        console.log(result)
         if (!result.productsread) {
             throw "權限不足";
         }
@@ -87,8 +86,8 @@ router.get("/product/:userid", async function (req, res, next) {
     }
 });
 
-router.get("/product/:userid/:id", async function (req, res, next) {
-    const userid = req.params.userid;
+router.get("/product/:id", async function (req, res, next) {
+    const userid = req.headers['userid'];
     const id = req.params.id;
     const db = new DB();
     const client = await db.connectpgdb();
@@ -123,8 +122,8 @@ router.get("/user", async function (req, res, next) {
     }
 });
 
-router.get("/user/:userid/:id", async function (req, res, next) {
-    const userid = req.params.userid;
+router.get("/user/:id", async function (req, res, next) {
+    const userid = req.headers['userid'];
     const id = req.params.id;
     const db = new DB();
     const client = await db.connectpgdb();

@@ -1,6 +1,13 @@
 $(async function () {
     const userid = localStorage.getItem("id");
-    const response = await fetch(`/get/product/${userid}`);
+    const config = {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            userid: userid
+        }
+    };
+    const response = await fetch(`/get/product`, config);
     if (!response.ok) {
         const errmsg = await response.text();
         $("#errorMsg").html(errmsg);
@@ -41,7 +48,14 @@ $(async function () {
 
 async function selectproduct(id) {
     const userid = localStorage.getItem("id");
-    const response = await fetch(`/get/product/${userid}/${id}`);
+    const config = {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            userid: userid
+        }
+    };
+    const response = await fetch(`/get/product/${id}`, config);
     if (!response.ok) {
         const errmsg = await response.text();
         alert(errmsg);
@@ -99,15 +113,16 @@ async function saveproduct() {
 
     let url = "";
     if (!productsInfo.id) {
-        url = `/post/product/${userid}`;
+        url = `/post/product`;
     } else {
-        url = `/put/product/${userid}/${productsInfo.id}`;
+        url = `/put/product/${productsInfo.id}`;
     }
 
     const config = {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            userid: userid
         },
         body: JSON.stringify(productsInfo)
     };
@@ -133,7 +148,14 @@ async function deleteproduct() {
 
     const check = confirm("確定要刪除嗎？");
     if (check) {
-        const response = await fetch(`/delete/product/${userid}/${id}`);
+        const config = {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                userid: userid
+            }
+        };
+        const response = await fetch(`/delete/product/${id}`, config);
         if (!response.ok) {
             const errmsg = await response.text();
             alert(errmsg);

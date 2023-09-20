@@ -27,7 +27,14 @@ $(async function () {
 
 async function selectuser(id) {
     const userid = localStorage.getItem("id");
-    const response = await fetch(`/get/user/${userid}/${id}`);
+    const config = {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            userid: userid
+        }
+    };
+    const response = await fetch(`/get/user/${id}`, config);
     if (!response.ok) {
         const errmsg = await response.text();
         alert(errmsg);
@@ -152,7 +159,7 @@ async function saveuser() {
     const nwepass = $("#nwepass").val() || null;
     const checkedpass = $("#checkedpass").val() || null;
 
-    let url = `/put/user/${userid}/${userInfo.id}`;
+    let url = `/put/user/${userInfo.id}`;
     // 如果有填寫密碼，代表要新增使用者
     if (!userInfo.id) {
         if (!password || !userInfo.name) {
@@ -166,13 +173,14 @@ async function saveuser() {
             return;
         }
         userInfo.password = password;
-        url = `/post/user/${userid}`;
+        url = `/post/user`;
     }
 
     const config = {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            userid: userid
         },
         body: JSON.stringify(userInfo)
     };
@@ -189,7 +197,7 @@ async function saveuser() {
             alert("非本人無法修改密碼！");
             window.location.href = `/user/${token}`;
         }
-        url = `/patch/user/${userid}/${userInfo.id}`;
+        url = `/patch/user/${userInfo.id}`;
         if (nwepass != checkedpass) {
             alert("修改密碼與確認密碼不一致");
             $("#nwepass").addClass("border-danger");
@@ -224,7 +232,14 @@ async function deleteuser() {
 
     const check = confirm("確定要刪除嗎？");
     if (check) {
-        const response = await fetch(`/delete/user/${userid}/${id}`);
+        const config = {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                userid: userid
+            }
+        };
+        const response = await fetch(`/delete/user/${id}`, config);
         if (!response.ok) {
             const errmsg = await response.text();
             alert(errmsg);

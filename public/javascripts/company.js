@@ -158,13 +158,14 @@ async function saveCompany() {
     const config = {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            serid: userid
         },
         body: JSON.stringify(companyInfo)
     };
     const token = localStorage.getItem("token");
     const userid = localStorage.getItem("id");
-    const response = await fetch(`/put/company/${userid}`, config);
+    const response = await fetch(`/put/company`, config);
     if (!response.ok) {
         const errmsg = await response.text();
         alert(errmsg);

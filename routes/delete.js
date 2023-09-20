@@ -4,8 +4,8 @@ const DB = require("../controller/conndb.js");
 const Delete = require("../controller/delete.js");
 const Common = require("../controller/common.js");
 
-router.get("/customer/:userid/:id", async function (req, res, next) {
-    const userid = req.params.userid;
+router.get("/customer/:id", async function (req, res, next) {
+    const userid = req.headers['userid'];
     const id = req.params.id;
     const db = new DB();
     const client = await db.connectpgdb();
@@ -26,8 +26,8 @@ router.get("/customer/:userid/:id", async function (req, res, next) {
     }
 });
 
-router.get("/product/:userid/:id", async function (req, res, next) {
-    const userid = req.params.userid;
+router.get("/product/:id", async function (req, res, next) {
+    const userid = req.headers['userid'];
     const id = req.params.id;
     const db = new DB();
     const client = await db.connectpgdb();
@@ -48,8 +48,8 @@ router.get("/product/:userid/:id", async function (req, res, next) {
     }
 });
 
-router.get("/user/:userid/:id", async function (req, res, next) {
-    const userid = req.params.userid;
+router.get("/user/:id", async function (req, res, next) {
+    const userid = req.headers['userid'];
     const id = req.params.id;
     const db = new DB();
     const client = await db.connectpgdb();

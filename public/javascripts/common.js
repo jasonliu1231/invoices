@@ -7,8 +7,6 @@ $(async function () {
     $("#userLink").attr("href", `/user/${token}`);
     $("#logoutLink").attr("href", `/logout/${token}`);
     $("#trackLink").attr("href", `/track/${token}`);
-
-
 });
 
 function theadTransition(column) {
@@ -90,11 +88,18 @@ async function searchCustomer(from) {
     $("#modalLabel").html("客戶列表");
     $("#loadingAction").show();
     const condition = $("#condition").val() || null;
-    let url = `/get/customer/${userid}`;
+    const config = {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            userid: userid
+        }
+    };
+    let url = `/get/customer`;
     if (condition) {
         url += `/${from}?condition=${condition}`;
     }
-    const response = await fetch(url);
+    const response = await fetch(url, config);
     if (response.ok) {
         $("#loadingAction").hide();
         const customers = await response.json();

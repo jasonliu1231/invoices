@@ -4,8 +4,8 @@ const DB = require("../controller/conndb.js");
 const Post = require("../controller/post.js");
 const Common = require("../controller/common.js");
 
-router.post("/customer/:userid", async function (req, res, next) {
-    const userid = req.params.userid;
+router.post("/customer", async function (req, res, next) {
+    const userid = req.headers['userid'];
     const body = req.body;
     const db = new DB();
     const client = await db.connectpgdb();
@@ -26,8 +26,8 @@ router.post("/customer/:userid", async function (req, res, next) {
     }
 });
 
-router.post("/product/:userid", async function (req, res, next) {
-    const userid = req.params.userid;
+router.post("/product", async function (req, res, next) {
+    const userid = req.headers['userid'];
     const body = req.body;
     const db = new DB();
     const client = await db.connectpgdb();
@@ -48,8 +48,8 @@ router.post("/product/:userid", async function (req, res, next) {
     }
 });
 
-router.post("/user/:userid", async function (req, res, next) {
-    const userid = req.params.userid;
+router.post("/user", async function (req, res, next) {
+    const userid = req.headers['userid'];
     const body = req.body;
     const db = new DB();
     const client = await db.connectpgdb();

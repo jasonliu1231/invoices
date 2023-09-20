@@ -4,8 +4,8 @@ const DB = require("../controller/conndb.js");
 const Patch = require("../controller/patch.js");
 const Common = require("../controller/common.js");
 
-router.post("/user/:userid/:id", async function (req, res, next) {
-    const userid = req.params.userid;
+router.post("/user/:id", async function (req, res, next) {
+    const userid = req.headers['userid'];
     const body = req.body;
     const id = req.params.id;
     const db = new DB();

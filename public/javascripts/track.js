@@ -78,7 +78,6 @@ async function saveFile() {
         };
         tracks.push(info);
     });
-    console.log(tracks);
 
     const userid = localStorage.getItem("id");
     const token = localStorage.getItem("token");
