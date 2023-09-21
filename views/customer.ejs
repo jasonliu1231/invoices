@@ -25,7 +25,10 @@
                 <tr>
                   <td class="p-2">客戶id</td>
                   <td class="p-2" colspan="3">
-                    <input id="id" type="text" class="form-control" placeholder="代表要修改的id，空白代表新增新">
+                    <div class="input-group flex-nowrap">
+                      <input id="id" type="text" class="form-control" placeholder="代表要修改的id，空白代表新增新" disabled>
+                      <button class="btn btn-outline-secondary" type="button" onclick="setCustomer()">清空欄位</button>
+                    </div>
                   </td>
                 </tr>
                 <tr>
@@ -52,62 +55,112 @@
                 <tr>
                   <td class="p-2">發票接收方式</label></td>
                   <td colspan="3">
-                    <input class="form-check-input mr-2" type="radio" name="type" id="useentity" value="0" checked>
-                    <label for="useentity">紙本發票</label>
-                    <input class="form-check-input mr-2" type="radio" name="type" id="useemail" value="1">
+                    <input class="form-check-input mr-2" type="radio" name="type" id="useentity" value="0" checked onclick="handleCollapse()">
+                    <label for="useentity">寄送紙本發票</label>
+                    <input class="form-check-input mr-2" type="radio" name="type" id="useemail" value="1" onclick="handleCollapse()">
                     <label for="useemail">email</label>
-                    <input class="form-check-input mr-2" type="radio" name="type" id="usecarrier" value="2">
+                    <input class="form-check-input mr-2" type="radio" name="type" id="usecarrier" value="2" onclick="handleCollapse()">
                     <label for="usecarrier">使用載具</label>
-                    <input class="form-check-input mr-2" type="radio" name="type" id="" value="3">
-                    <label for="">會員載具</label>
-                    <input class="form-check-input mr-2" type="radio" name="type" id="donatemark" value="4">
+                    <input class="form-check-input mr-2" type="radio" name="type" id="usemember" value="3" onclick="handleCollapse()">
+                    <label for="usemember">會員載具</label>
+                    <input class="form-check-input mr-2" type="radio" name="type" id="donatemark" value="4" onclick="handleCollapse()">
                     <label for="donatemark">捐贈</label>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="p-2">收件人</td>
-                  <td>
-                    <input id="recipient" type="text" class="form-control">
-                  </td>
-                  <td class="p-2">電話號碼</td>
-                  <td>
-                    <input id="tel" type="text" class="form-control">
-                  </td>
-                </tr>
-                <tr>
-                  <td class="p-2">地址</td>
-                  <td class="p-2" colspan="3">
-                    <input id="address" type="text" class="form-control">
-                  </td>
-                </tr>
-                <tr>
-                  <td class="p-2">電子郵件</td>
-                  <td class="p-2" colspan="3">
-                    <input id="email" type="text" class="form-control">
-                  </td>
-                </tr>
-                <tr>
-                  <td class="p-2">載具條碼</td>
-                  <td class="p-2" colspan="3">
-                    <input id="carrierid" type="text" class="form-control" placeholder="請填寫載具條碼，手機載具8碼、自然人載具16碼。">
-                  </td>
-                </tr>
-                <tr>
-                  <td class="p-2">捐贈碼</td>
-                  <td class="p-2" colspan="3">
-                    <input id="npoban" type="text" class="form-control" placeholder="預設捐給創世基金會">
-                  </td>
-                </tr>
-                <tr>
-                  <td class="p-2">會員編號</td>
-                  <td class="p-2" colspan="3">
-                    <input id="memberid" type="text" class="form-control">
                   </td>
                 </tr>
               </tbody>
             </table>
-            <button class="btn btn-outline-primary" id="savecustomer" onclick="savecustomer()">儲存</button>
-            <button class="btn btn-outline-danger" id="deletecustomer" onclick="deletecustomer()">刪除</button>
+            <div class="accordion" id="accordionExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button bg-body-tertiary collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                    紙本發票寄送資訊
+                  </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <div class="input-group m-1">
+                      <span class="input-group-text bg-dark-subtle" style="width: 100px;">收件人</span>
+                      <input type="text" class="form-control" id="recipient">
+                    </div>
+                    <div class="input-group m-1">
+                      <span class="input-group-text bg-dark-subtle" style="width: 100px;">電話號碼</span>
+                      <input type="text" class="form-control" id="tel">
+                    </div>
+                    <div class="input-group m-1">
+                      <span class="input-group-text bg-dark-subtle" style="width: 100px;">地址</span>
+                      <input type="text" class="form-control" id="address">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button bg-body-tertiary collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    E-mail
+                  </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <div class="input-group m-1">
+                      <span class="input-group-text bg-dark-subtle" style="width: 100px;">電子郵件</span>
+                      <input type="email" class="form-control" id="email">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button bg-body-tertiary collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    載具條碼
+                  </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <div class="input-group m-1">
+                      <span class="input-group-text bg-dark-subtle" style="width: 100px;">載具條碼</span>
+                      <input type="text" class="form-control" id="carrierid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button bg-body-tertiary collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                    會員編號
+                  </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <div class="input-group m-1">
+                      <span class="input-group-text bg-dark-subtle" style="width: 100px;">會員編號</span>
+                      <input type="text" class="form-control" id="memberid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button bg-body-tertiary collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                    捐贈碼
+                  </button>
+                </h2>
+                <div id="collapseFive" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <div class="input-group m-1">
+                      <span class="input-group-text bg-dark-subtle" style="width: 100px;">捐贈碼</span>
+                      <input type="text" class="form-control" id="npoban">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-outline-primary" id="savecustomer" onclick="saveCustomer()">儲存</button>
+            <button class="btn btn-outline-danger" id="deletecustomer" onclick="deleteCustomer()">刪除</button>
           </div>
         </div>
       </div>

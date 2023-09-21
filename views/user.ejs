@@ -44,7 +44,10 @@
                 <tr>
                   <td class="p-2">客戶id</td>
                   <td class="p-2" colspan="3">
-                    <input id="id" type="text" class="form-control" placeholder="代表要修改的id，空白代表新增新">
+                    <div class="input-group flex-nowrap">
+                      <input id="id" type="text" class="form-control" placeholder="代表要修改的id，空白代表新增新" disabled>
+                      <button class="btn btn-outline-secondary" type="button" onclick="setUser()">清空欄位</button>
+                    </div>
                   </td>
                 </tr>
                 <tr>
@@ -66,21 +69,43 @@
                     <input class="form-check-input mr-2" type="radio" name="type" id="disabled" value="1">
                     <label for="disabled">停用中</label>
                   </td>
-                  <td class="p-2" colspan="2"><button class="btn btn-outline-secondary btn-sm" id=""
-                      onclick="changePassword()">修改密碼</button></td>
-                </tr>
-                <tr id="newPassword" style="display: none;">
-                  <td class="p-2">新密碼</td>
-                  <td>
-                    <input id="nwepass" type="text" class="form-control">
-                  </td>
-                  <td class="p-2">確認密碼</td>
-                  <td>
-                    <input id="checkedpass" type="text" class="form-control">
+                  <td class="p-2" colspan="2">
+                    <button class="btn btn-outline-secondary btn-sm" onclick="changePassword()">修改密碼</button>
                   </td>
                 </tr>
               </tbody>
             </table>
+            <button class="d-none" id="changePasswordBtn" data-bs-toggle="modal" data-bs-target="#passwordModal"></button>
+            <!-- Modal -->
+            <div class="modal fade" id="passwordModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">修改密碼</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="input-group m-1">
+                      <span class="input-group-text bg-dark-subtle" style="width: 100px;">舊密碼</span>
+                      <input type="text" class="form-control" id="oldpassword">
+                    </div>
+                    <div class="input-group m-1">
+                      <span class="input-group-text bg-dark-subtle" style="width: 100px;">新密碼</span>
+                      <input type="text" class="form-control" id="nwepass">
+                    </div>
+                    <div class="input-group m-1">
+                      <span class="input-group-text bg-dark-subtle" style="width: 100px;">確認密碼</span>
+                      <input type="text" class="form-control" id="checkedpass">
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="savePassword()">修改</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <h3>權限設定</h3>
             <div class="accordion mb-3" id="accordionPanelsStayOpenExample">
               <div class="accordion-item">

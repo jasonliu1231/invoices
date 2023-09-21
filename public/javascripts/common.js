@@ -58,12 +58,7 @@ function customerTypeTransition(val) {
 }
 
 function tableTarget(e) {
-    $("#modalTable tbody tr").removeClass("table-success");
-    $(e).addClass("table-success");
-}
-
-function selsetItem() {
-    const checked = $("#modalTable tbody .table-success").children();
+    const checked = $(e).children();
     checked.each((index, item) => {
         const id = $(item).attr("data-name");
         if (id === "type") {
@@ -71,19 +66,17 @@ function selsetItem() {
             radio.each((index, element) => {
                 $(element).val() === $(item).html() &&
                     $(element).prop("checked", true);
+                if ($(".accordion-button")) {
+                    $(".accordion-button")[$(item).html()].click();
+                }
             });
         }
         $(`#${id}`).val($(item).html());
     });
+    $("#modalClose").click();
 }
 
 async function searchCustomer(from) {
-    const popoverTriggerList = document.querySelectorAll(
-        '[data-bs-toggle="popover"]'
-    );
-    const popoverList = [...popoverTriggerList].map(
-        (popoverTriggerEl) => new bootstrap.Popover(popoverTriggerEl)
-    );
     const userid = localStorage.getItem("id");
     $("#modalLabel").html("客戶列表");
     $("#loadingAction").show();
@@ -139,4 +132,27 @@ async function searchCustomer(from) {
         $("#modalTable").hide();
         $("#modalMsg").show().html(errmsg);
     }
+}
+
+function alertBox(type, msg) {
+    let element = "";
+    if (type === "success") {
+        element = "successAlert";
+    } else if (type === "error") {
+        element = "errorAlert";
+        $(`#${element} p`).html(msg);
+    } else if (type === "warning") {
+        element = "warningAlert";
+        $(`#${element} p`).html(msg);
+    }
+    $(`#${element}`).css("top", "56px");
+    if (type === "success" || type === "warning") {
+        setTimeout(() => {
+            $(`#${element}`).css("top", "-100%");
+        }, 1500);
+    }
+}
+
+function closeAlert(element) {
+    $(element).parents('.alert').css("top", "-100%");
 }

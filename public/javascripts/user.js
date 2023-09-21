@@ -13,12 +13,16 @@ $(async function () {
         );
         if (user.disabled === "0") {
             div.append(
-                `<a href="#" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover ${user.id === userid && 'fs-5 text-success'}">${user.name}</a>`
+                `<a href="#" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover ${
+                    user.id === userid && "fs-5 text-success"
+                }">${user.name}</a>`
             );
             $("#enabledUser").append(div);
         } else {
             div.append(
-                `<a href="#" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover ${user.id === userid && 'fs-5 text-success'}">${user.name}</a>`
+                `<a href="#" class="link-danger link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover ${
+                    user.id === userid && "fs-5 text-success"
+                }">${user.name}</a>`
             );
             $("#disabledUser").append(div);
         }
@@ -37,7 +41,7 @@ async function selectuser(id) {
     const response = await fetch(`/get/user/${id}`, config);
     if (!response.ok) {
         const errmsg = await response.text();
-        alert(errmsg);
+        alertBox("error", errmsg);
     }
     const data = await response.json();
     $("#id").val(data.id);
@@ -100,10 +104,22 @@ function changePassword() {
     const id = $("#id").val();
     const userid = localStorage.getItem("id");
     if (id != userid) {
-        alert("非本人無法修改密碼！");
+        alertBox("warning", "非本人無法修改密碼！");
         return;
+    } else {
+        $("#changePasswordBtn").click();
     }
-    $("#newPassword").toggle();
+}
+
+function setUser() {
+    $("#id").val("");
+    $("#name").val("");
+    $("input[name='type']:checked").val("");
+    $("#password").val("");
+    $("#nwepass").val("");
+    $("#checkedpass").val("");
+    const checkbox = $("input[type=checkbox]");
+    checkbox.prop("checked", false);
 }
 
 function getSettingVal() {
@@ -151,19 +167,73 @@ function getSettingVal() {
     };
 }
 
+async function savePassword() {
+    const id = $("#id").val() || null;
+    const userid = localStorage.getItem("id");
+    const oldpassword = $("#oldpassword").val() || null;
+    const nwepass = $("#nwepass").val() || null;
+    const checkedpass = $("#checkedpass").val() || null;
+
+    if (id != userid) {
+        alertBox("warning", "非本人無法修改密碼！");
+        return;
+    }
+    const url = `/patch/user/${id}`;
+    const passwordInfo = {
+        oldpassword,
+        nwepass
+    };
+    if (!oldpassword || !nwepass || !checkedpass) {
+        alertBox("warning", "密碼欄位請勿空白！");
+        !oldpassword
+            ? $("#oldpassword").addClass("border-danger")
+            : $("#oldpassword").removeClass("border-danger");
+        !nwepass
+            ? $("#nwepass").addClass("border-danger")
+            : $("#nwepass").removeClass("border-danger");
+        !checkedpass
+            ? $("#checkedpass").addClass("border-danger")
+            : $("#checkedpass").removeClass("border-danger");
+        return;
+    }
+    if (nwepass != checkedpass) {
+        alertBox("warning", "修改密碼與確認密碼不一致");
+        $("#nwepass").addClass("border-danger");
+        $("#checkedpass").addClass("border-danger");
+        return;
+    } else {
+        $("#nwepass").removeClass("border-danger");
+        $("#checkedpass").removeClass("border-danger");
+    }
+    const config = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            userid: userid
+        },
+        body: JSON.stringify(passwordInfo)
+    };
+    const response = await fetch(url, config);
+    if (!response.ok) {
+        const errmsg = await response.text();
+        alertBox("error", errmsg);
+    } else {
+        alertBox("success");
+        setUser();
+    }
+}
+
 async function saveuser() {
     const token = localStorage.getItem("token");
     const userid = localStorage.getItem("id");
     const userInfo = getSettingVal();
     const password = $("#password").val() || null;
-    const nwepass = $("#nwepass").val() || null;
-    const checkedpass = $("#checkedpass").val() || null;
 
     let url = `/put/user/${userInfo.id}`;
     // 如果有填寫密碼，代表要新增使用者
     if (!userInfo.id) {
         if (!password || !userInfo.name) {
-            alert("新增使用者，名稱與密碼欄位請勿空白！");
+            alertBox("warning", "新增使用者，名稱與密碼欄位請勿空白！");
             !password
                 ? $("#password").addClass("border-danger")
                 : $("#password").removeClass("border-danger");
@@ -187,36 +257,14 @@ async function saveuser() {
     let response = await fetch(url, config);
     if (!response.ok) {
         const errmsg = await response.text();
-        alert(errmsg);
-        return;
-    }
-
-    // 有新密碼，代表要改密碼
-    if (nwepass) {
-        if (userInfo.id && userInfo.id != userid) {
-            alert("非本人無法修改密碼！");
-            window.location.href = `/user/${token}`;
-        }
-        url = `/patch/user/${userInfo.id}`;
-        if (nwepass != checkedpass) {
-            alert("修改密碼與確認密碼不一致");
-            $("#nwepass").addClass("border-danger");
-            $("#checkedpass").addClass("border-danger");
-            return;
-        } else {
-            $("#nwepass").removeClass("border-danger");
-            $("#checkedpass").removeClass("border-danger");
-            userInfo.nwepass = nwepass;
-        }
-        response = await fetch(url, config);
-        if (!response.ok) {
-            const errmsg = await response.text();
-            alert(errmsg);
-            return;
-        }
-        window.location.href = `/user/${token}`;
+        alertBox("error", errmsg);
     } else {
-        window.location.href = `/user/${token}`;
+        setUser();
+        const token = localStorage.getItem("token");
+        alertBox("success");
+        setTimeout(() => {
+            window.location.href = `/user/${token}`;
+        }, 1500);
     }
 }
 
@@ -225,7 +273,7 @@ async function deleteuser() {
     const userid = localStorage.getItem("id");
     const id = $("#id").val() || null;
     if (!id || id.length != 36) {
-        alert("刪除請填寫完整的使用者id");
+        alertBox("warning", "刪除請填寫完整的使用者id");
         $("#id").addClass("border-danger");
         return;
     }
@@ -242,8 +290,14 @@ async function deleteuser() {
         const response = await fetch(`/delete/user/${id}`, config);
         if (!response.ok) {
             const errmsg = await response.text();
-            alert(errmsg);
+            alertBox("error", errmsg);
+        } else {
+            setUser();
+            const token = localStorage.getItem("token");
+            alertBox("success");
+            setTimeout(() => {
+                window.location.href = `/user/${token}`;
+            }, 1500);
         }
-        window.location.href = `/user/${token}`;
     }
 }

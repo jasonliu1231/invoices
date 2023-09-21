@@ -44,7 +44,7 @@ $(async function () {
         $("#trackBody").html(html);
     } else {
         const errmsg = await response.text();
-        alert(errmsg);
+        alertBox("error", errmsg);
     }
 });
 
@@ -91,10 +91,13 @@ async function saveFile() {
     };
     let response = await fetch("/post/track", config);
     if (response.ok) {
-        window.location.href = `/track/${token}`;
+        alertBox("success");
+        setTimeout(() => {
+            window.location.href = `/track/${token}`;
+        }, 1500);
     } else {
         const errmsg = await response.text();
-        alert(errmsg);
+        alertBox("error", errmsg);
     }
 }
 

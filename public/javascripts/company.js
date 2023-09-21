@@ -36,9 +36,8 @@ $(async function () {
 });
 
 function changeType() {
-    let checked = $("[name=type]:checked");
-
-    if (checked.val() === 2) {
+    let checked = $("input[name=type]:checked");
+    if (checked.val() === "2") {
         $("#inputImg").show();
         $("#inputImg")[0].currentSrc
             ? $("#inputFile").hide()
@@ -46,7 +45,7 @@ function changeType() {
     } else {
         $("#inputImg").hide();
     }
-    checked.val() === 3 ? $("#customName").show() : $("#customName").hide();
+    checked.val() === "3" ? $("#customName").show() : $("#customName").hide();
 }
 
 function setAddr() {
@@ -63,13 +62,13 @@ function changimg() {
 async function readimg() {
     //判斷瀏覽器支援 filereader，IE 好像就不能...
     if (typeof FileReader === "undifined") {
-        alert("瀏覽器不支援");
+        alertBox("warning", "瀏覽器不支援");
         return;
     }
     let invoicetitleimage = $("#inputFile")[0].files[0];
     //判斷是否為圖片檔
     if (!/image\/\w+/.test(invoicetitleimage.type)) {
-        alert("文件不是圖片");
+        alertBox("warning", "文件不是圖片");
         return;
     }
 
@@ -97,6 +96,22 @@ async function readimg() {
     };
 }
 
+function setCompanyInfo(companyInfo) {
+    $("#name").val(companyInfo.name);
+    $("#personInCharge").val(companyInfo.personInCharge);
+    $("#unum").val(companyInfo.unum);
+    $("#taxId").val(companyInfo.taxId);
+    $("#companyAddress").val(companyInfo.companyAddress);
+    $("#connectionAddress").val(companyInfo.connectionAddress);
+    $("#tel").val(companyInfo.tel);
+    $("#facsimileNumber").val(companyInfo.facsimileNumber);
+    $("#email").val(companyInfo.email);
+    $("#roleremark").val(companyInfo.roleremark);
+    $("[name=type]:checked").val(companyInfo.printType);
+    $("#customName").val(companyInfo.customName);
+    $("#inputImg").attr("src", companyInfo.inputImg);
+}
+
 async function saveCompany() {
     const name = $("#name").val().trim() || null,
         personInCharge = $("#personInCharge").val().trim() || null,
@@ -119,13 +134,13 @@ async function saveCompany() {
         !unum
             ? $("#unum").addClass("border-danger")
             : $("#unum").removeClass("border-danger");
-        alert("必填欄位不可空白");
+        alertBox("warning", "必填欄位不可空白");
         return;
     }
 
     if (taxId && taxId.length != 9) {
         $("#taxId").addClass("border-danger");
-        alert("稅籍編號只能9碼");
+        alertBox("warning", "稅籍編號只能9碼");
         return;
     } else {
         $("#taxId").removeClass("border-danger");
@@ -133,7 +148,7 @@ async function saveCompany() {
 
     if (unum.length != 8) {
         $("#unum").addClass("border-danger");
-        alert("統一編號只能8碼");
+        alertBox("warning", "統一編號只能8碼");
         return;
     } else {
         $("#unum").removeClass("border-danger");
@@ -155,21 +170,21 @@ async function saveCompany() {
         inputImg
     };
 
+    const userid = localStorage.getItem("id");
     const config = {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            serid: userid
+            userid: userid
         },
         body: JSON.stringify(companyInfo)
     };
-    const token = localStorage.getItem("token");
-    const userid = localStorage.getItem("id");
     const response = await fetch(`/put/company`, config);
     if (!response.ok) {
         const errmsg = await response.text();
-        alert(errmsg);
+        alertBox("error", errmsg);
     } else {
-        window.location.href = `/company/${token}`;
+        await alertBox("success");
+        setCompanyInfo(companyInfo);
     }
 }

@@ -11,11 +11,11 @@
     <div class="mx-auto align-middle">
       <div class="mb-3">
         <label for="user" class="form-label">帳號</label>
-        <input type="email" class="form-control" id="user" aria-describedby="emailHelp" placeholder="員工名稱"/>
+        <input type="email" class="form-control" id="user" aria-describedby="emailHelp" placeholder="員工名稱" />
       </div>
       <div class="mb-3">
         <label for="password" class="form-label">密碼</label>
-        <input type="password" class="form-control" id="password" placeholder="注意密碼是區分大小寫的"/>
+        <input type="password" class="form-control" id="password" placeholder="注意密碼是區分大小寫的" />
       </div>
       <button id="submit" type="submit" class="btn btn-primary" onclick="login()">
         Login
@@ -23,5 +23,5 @@
     </div>
   </div>
 </body>
-
+<%-include('alert') %>
 </html>

@@ -17,7 +17,7 @@ router.post("/user/:id", async function (req, res, next) {
         if (!result.usersupdate) {
             throw "權限不足";
         }
-        result = await common.checkid(client, 'user', id);
+        result = await common.checkid(client, 'users', id);
         if (!result) {
             throw "id 不存在，請再次確認是否正確！";
         }

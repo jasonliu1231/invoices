@@ -41,7 +41,7 @@ class Get {
     async allproducts(client) {
         try {
             const sql = `SELECT 
-                            id, name, price, category 
+                            id, name, price, unit, category 
                         FROM product ORDER BY category`;
             const result = await client.query(sql);
             return result.rows;

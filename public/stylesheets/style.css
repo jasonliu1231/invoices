@@ -11,5 +11,14 @@ a {
 }
 
 .table-hover tbody tr:hover {
-  background-color: #ffcccc; /* 你希望的顏色 */
+  cursor: pointer;
+  background-color: #2fd469 !important; /* 沒有作用，先放著 */
+}
+
+#successAlert, #errorAlert, #warningAlert {
+  position: fixed;
+  transition: top 0.5s ease; /* 使用 transition 控制動畫效果 */
+  top: -100%;
+  left: 50%;
+  transform: translate(-50%);
 }

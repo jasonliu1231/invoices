@@ -1,3 +1,6 @@
+$(function () {
+    $(".accordion-button")[0].click();
+});
 function getSettingVal() {
     const id = $("#id").val() || null;
     const name = $("#name").val() || null;
@@ -30,7 +33,25 @@ function getSettingVal() {
     };
 }
 
-async function savecustomer() {
+function setCustomer() {
+    $("#id").val("");
+    $("#name").val("");
+    $("#unum").val("");
+    $("#mobile").val("");
+    $("#roleremark").val("");
+    $(`input[value=0]`).prop("checked", true);
+    $("collapseOne").addClass("show");
+    $("#recipient").val("");
+    $("#tel").val("");
+    $("#address").val("");
+    $("#email").val("");
+    $("#carrierid").val("");
+    $("#npoban").val("");
+    $("#memberid").val("");
+    $(".accordion-button")[0].click();
+}
+
+async function saveCustomer() {
     const customerInfo = getSettingVal();
     if (!customerInfo.name || !customerInfo.mobile) {
         !customerInfo.name
@@ -39,12 +60,11 @@ async function savecustomer() {
         !customerInfo.mobile
             ? $("#mobile").addClass("border-danger")
             : $("#mobile").removeClass("border-danger");
-        alert("必填欄位不可空白");
+        alertBox("warning", "必填欄位不可空白");
         return;
     }
 
     let url = "";
-    const token = localStorage.getItem("token");
     const userid = localStorage.getItem("id");
     if (!customerInfo.id) {
         url = `/post/customer`;
@@ -63,22 +83,22 @@ async function savecustomer() {
     const response = await fetch(url, config);
     if (!response.ok) {
         const errmsg = await response.text();
-        alert(errmsg);
+        alertBox("error", errmsg);
     } else {
-        window.location.href = `/customer/${token}`;
+        alertBox("success");
+        setCustomer();
     }
 }
 
-async function deletecustomer() {
+async function deleteCustomer() {
     const id = $("#id").val() || null;
     if (!id || id.length != 36) {
-        alert("刪除請填寫完整的客戶id");
+        alertBox("warning", "刪除請填寫完整的客戶id");
         $("#id").addClass("border-danger");
         return;
     }
 
     const check = confirm("確定要刪除嗎？");
-    const token = localStorage.getItem("token");
     const userid = localStorage.getItem("id");
     if (check) {
         const config = {
@@ -91,9 +111,15 @@ async function deletecustomer() {
         const response = await fetch(`/delete/customer/${id}`, config);
         if (!response.ok) {
             const errmsg = await response.text();
-            alert(errmsg);
+            alertBox("error", errmsg);
             return;
         }
-        window.location.href = `/customer/${token}`;
+        alertBox("success");
+        setCustomer();
     }
+}
+
+function handleCollapse() {
+    const checked = $("[name=type]:checked").val();
+    $(".accordion-button")[checked].click();
 }

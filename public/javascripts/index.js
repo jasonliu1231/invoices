@@ -30,13 +30,13 @@ async function login() {
         !password
             ? $("#password").addClass("border-danger")
             : $("#password").removeClass("border-danger");
-        alert("欄位不可以空白！");
+        alertBox("warning", "欄位不可以空白！")
         return;
     }
 
     if (password.match(regex) === null) {
         $("#password").addClass("border-danger");
-        alert("密碼只能為數字或英文！");
+        alertBox("warning", "密碼只能為數字或英文！")
         return;
     } else {
         $("#password").removeClass("border-danger");
@@ -57,6 +57,6 @@ async function login() {
         window.location.href = `/company/${data.token}`;
     } else {
         const errmsg = await response.text();
-        alert(errmsg);
+        alertBox("error", errmsg);
     }
 }

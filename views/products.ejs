@@ -14,7 +14,7 @@
           data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">產品選單</button>
 
         <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions"
-          aria-labelledby="offcanvasWithBothOptionsLabel">
+          aria-labelledby="offcanvasWithBothOptionsLabel" style="width: 60vw;">
           <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">產品列表</h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -30,7 +30,10 @@
               <tr>
                 <td class="p-2">產品id</td>
                 <td class="p-2" colspan="3">
-                  <input id="id" type="text" class="form-control" placeholder="代表要修改的id，空白代表新增新">
+                  <div class="input-group flex-nowrap">
+                    <input id="id" type="text" class="form-control" placeholder="代表要修改的id，空白代表新增新" disabled>
+                    <button class="btn btn-outline-secondary" type="button" onclick="setProduct()">清空欄位</button>
+                  </div>
                 </td>
               </tr>
               <tr>
@@ -76,8 +79,8 @@
             </tbody>
           </table>
           <br>
-          <button id="submitbtn" class="btn btn-outline-primary" onclick="saveproduct()">儲存</button>
-          <button class="btn btn-outline-danger" onclick="deleteproduct()">刪除</button>
+          <button id="submitbtn" class="btn btn-outline-primary" onclick="saveProduct()">儲存</button>
+          <button class="btn btn-outline-danger" onclick="deleteProduct()">刪除</button>
         </div>
       </div>
     </div>

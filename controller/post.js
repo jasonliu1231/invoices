@@ -123,6 +123,7 @@ class Post {
 
     async track(client, body) {
         try {
+            client.query("BEGIN");
             for (let i = 0; i < body.length; i++) {
                 const id = crypto.randomUUID();
                 const track = body[i];
@@ -155,6 +156,7 @@ class Post {
                 ];
                 await client.query(sql, params);
             }
+            client.query("COMMIT");
         } catch (err) {
             throw "連線資料庫錯誤！原因：" + err;
         }

@@ -30,11 +30,13 @@ $(async function () {
         const collapseCard = $(`<div class="card card-body"></div>`);
         let collapseText = "";
         data.forEach((item) => {
+            console.log(item);
             if (item.category === category) {
                 collapseText += `<div data-bs-dismiss="offcanvas" aria-label="Close" class="p-1" style="cursor: pointer;" onclick="selectproduct('${item.id}')">
-                                    <div class="d-flex justify-content-between collapseText">
-                                        <span class="icon-link icon-link-hover">${item.name}</span>
-                                        <span>$${item.price}</span>
+                                    <div class="d-flex collapseText">
+                                        <span class="text-nowrap text-truncate" data-toggle="tooltip" title="${item.name}" style="width: 33%;">${item.name}</span>
+                                        <span class="text-nowrap text-truncate" data-toggle="tooltip" title="${item.unit}" style="width: 33%;">${item.unit ? item.unit : ""}</span>
+                                        <span class="text-nowrap text-truncate" data-toggle="tooltip" title="${item.price}" style="width: 33%;">$${item.price}</span>
                                     </div>
                                 </div>`;
             }
@@ -58,7 +60,7 @@ async function selectproduct(id) {
     const response = await fetch(`/get/product/${id}`, config);
     if (!response.ok) {
         const errmsg = await response.text();
-        alert(errmsg);
+        alertBox("error", errmsg);
     }
     const data = await response.json();
     $("#id").val(data.id);
@@ -69,6 +71,17 @@ async function selectproduct(id) {
     $("#price").val(data.price);
     $("#unit").val(data.unit);
     $("#remark").val(data.remark);
+}
+
+function setProduct() {
+    $("#id").val("");
+    $("#name").val("");
+    $("#category").val("");
+    $("#no").val("");
+    $("#barcode").val("");
+    $("#price").val("");
+    $("#unit").val("");
+    $("#remark").val("");
 }
 
 function getSettingVal() {
@@ -93,8 +106,7 @@ function getSettingVal() {
     };
 }
 
-async function saveproduct() {
-    const token = localStorage.getItem("token");
+async function saveProduct() {
     const userid = localStorage.getItem("id");
     const productsInfo = getSettingVal();
     if (!productsInfo.name || !productsInfo.category || !productsInfo.price) {
@@ -107,7 +119,7 @@ async function saveproduct() {
         !productsInfo.price
             ? $("#price").addClass("border-danger")
             : $("#price").removeClass("border-danger");
-        alert("必填欄位不可空白");
+        alertBox("warning", "必填欄位不可空白");
         return;
     }
 
@@ -129,19 +141,22 @@ async function saveproduct() {
     const response = await fetch(url, config);
     if (!response.ok) {
         const errmsg = await response.text();
-        alert(errmsg);
+        alertBox("error", errmsg);
         return;
     } else {
-        window.location.href = `/products/${token}`;
+        const token = localStorage.getItem("token");
+        alertBox("success");
+        setTimeout(() => {
+            window.location.href = `/products/${token}`;
+        }, 1500);
     }
 }
 
-async function deleteproduct() {
-    const token = localStorage.getItem("token");
+async function deleteProduct() {
     const userid = localStorage.getItem("id");
     const id = $("#id").val() || null;
     if (!id || id.length != 36) {
-        alert("刪除請填寫完整的產品id");
+        alertBox("warning", "刪除請填寫完整的產品id");
         $("#id").addClass("border-danger");
         return;
     }
@@ -158,8 +173,12 @@ async function deleteproduct() {
         const response = await fetch(`/delete/product/${id}`, config);
         if (!response.ok) {
             const errmsg = await response.text();
-            alert(errmsg);
+            alertBox("error", errmsg);
         }
-        window.location.href = `/products/${token}`;
+        const token = localStorage.getItem("token");
+        alertBox("success");
+        setTimeout(() => {
+            window.location.href = `/products/${token}`;
+        }, 1500);
     }
 }
