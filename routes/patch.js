@@ -31,4 +31,26 @@ router.post("/user/:id", async function (req, res, next) {
     }
 });
 
+router.post("/product", async function (req, res, next) {
+    const userid = req.headers['userid'];
+    const body = req.body;
+    const db = new DB();
+    const client = await db.connectpgdb();
+    try {
+        // 檢查權限
+        const common = new Common();
+        let result = await common.permis(client, userid);
+        if (!result.productsupdate) {
+            throw "權限不足";
+        }
+        const patch = new Patch();
+        await patch.product(client, body);
+        res.send();
+    } catch (err) {
+        res.status(404).send(err);
+    } finally {
+        client.release();
+    }
+});
+
 module.exports = router;

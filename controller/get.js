@@ -38,6 +38,20 @@ class Get {
         }
     }
 
+    async customerFromInvoice(client, condition) {
+        try {
+            const sql = `SELECT 
+                            id, name, unum, type, recipient, address, tel, email, carrierid, npoban, mobile
+                        FROM customer
+                        WHERE tel LIKE $1 OR mobile LIKE $1 OR name LIKE $1 OR unum LIKE $1 OR roleremark LIKE $1 `;
+            const params = [`%${condition}%`];
+            const result = await client.query(sql, params);
+            return result.rows;
+        } catch (err) {
+            throw "連線資料庫錯誤！原因：" + err;
+        }
+    }
+
     async allproducts(client) {
         try {
             const sql = `SELECT 
@@ -58,6 +72,19 @@ class Get {
             const params = [id];
             const result = await client.query(sql, params);
             return result.rows[0];
+        } catch (err) {
+            throw "連線資料庫錯誤！原因：" + err;
+        }
+    }
+
+    async searchProduct(client, condition) {
+        try {
+            const sql = `SELECT 
+                            name, unit, price
+                        FROM product WHERE no LIKE $1 OR name LIKE $1 OR barcode LIKE $1`;
+            const params = [`%${condition}%`];
+            const result = await client.query(sql, params);
+            return result.rows;
         } catch (err) {
             throw "連線資料庫錯誤！原因：" + err;
         }

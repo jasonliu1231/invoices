@@ -56,6 +56,8 @@ router.get("/customer/:from", async function (req, res, next) {
         const get = new Get();
         if (from === "setting") {
             result = await get.customerFromSetting(client, condition);
+        } else if (from === "invoice") {
+            result = await get.customerFromInvoice(client, condition);
         }
         res.send(result);
     } catch (error) {
@@ -100,6 +102,28 @@ router.get("/product/:id", async function (req, res, next) {
         }
         const get = new Get();
         result = await get.product(client, id);
+        res.send(result);
+    } catch (error) {
+        res.status(404).send(error);
+    } finally {
+        client.release();
+    }
+});
+
+router.get("/searchproduct", async function (req, res, next) {
+    const userid = req.headers['userid'];
+    const condition = req.query.condition;
+    const db = new DB();
+    const client = await db.connectpgdb();
+    try {
+        // 檢查權限
+        const common = new Common();
+        let result = await common.permis(client, userid);
+        if (!result.productsread) {
+            throw "權限不足";
+        }
+        const get = new Get();
+        result = await get.searchProduct(client, condition);
         res.send(result);
     } catch (error) {
         res.status(404).send(error);

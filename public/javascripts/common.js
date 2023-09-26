@@ -7,6 +7,7 @@ $(async function () {
     $("#userLink").attr("href", `/user/${token}`);
     $("#logoutLink").attr("href", `/logout/${token}`);
     $("#trackLink").attr("href", `/track/${token}`);
+    $("#b2cinvoiceLink").attr("href", `/b2cinvoice/${token}`);
 });
 
 function theadTransition(column) {
@@ -35,6 +36,10 @@ function theadTransition(column) {
             return "手機";
         case "memberid":
             return "會員編號";
+        case "unit":
+            return "單位";
+        case "price":
+            return "單價";
         default:
             return column;
     }
@@ -80,7 +85,7 @@ async function searchCustomer(from) {
     const userid = localStorage.getItem("id");
     $("#modalLabel").html("客戶列表");
     $("#loadingAction").show();
-    const condition = $("#condition").val() || null;
+    const condition = $("#customerCondition").val() || null;
     const config = {
         method: "GET",
         headers: {
@@ -131,6 +136,71 @@ async function searchCustomer(from) {
         const errmsg = await response.text();
         $("#modalTable").hide();
         $("#modalMsg").show().html(errmsg);
+    }
+}
+
+async function searchProduct() {
+    const userid = localStorage.getItem("id");
+    const config = {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            userid: userid
+        }
+    };
+    const response = await fetch(`/get/product`, config);
+    if (!response.ok) {
+        const errmsg = await response.text();
+        $("#errorMsg").html(errmsg);
+    }
+
+    const data = await response.json();
+    const categorys = new Set();
+    data.forEach((item) => {
+        categorys.add(item.category);
+    });
+    for (let category of categorys.keys()) {
+        const option = $(`<option value="${category}"></option>`);
+        const option2 = $(`<option value="${category}">${category}</option>`);
+        $("#typelist").append(option);
+        $("#typelist2").append(option2);
+        const item = $("<div></div>");
+        const collapsebtn = `<button class="btn btn-outline-secondary btn-sm my-2" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#${category}" aria-expanded="false" aria-controls="collapseExample">
+                        ${category}
+                    </button>`;
+        const collapseData = $(`<div class="collapse" id="${category}"></div>`);
+        const collapseCard = $(`<div class="card card-body"></div>`);
+        let collapseText = "";
+        data.forEach((item) => {
+            if (item.category === category) {
+                collapseText += `<div data-bs-dismiss="offcanvas" aria-label="Close" class="p-1" style="cursor: pointer;" onclick="selectproduct('${
+                    item.id
+                }', event)">
+                                    <div class="d-flex collapseText">
+                                        <span class="name text-nowrap text-truncate" data-toggle="tooltip" title="${
+                                            item.name
+                                        }" style="width: 33%;">${
+                    item.name
+                }</span>
+                                        <span class="unit text-nowrap text-truncate" data-toggle="tooltip" title="${
+                                            item.unit
+                                        }" style="width: 33%;">${
+                    item.unit ? item.unit : ""
+                }</span>
+                                        <span class="price text-nowrap text-truncate" data-toggle="tooltip" title="${
+                                            item.price
+                                        }" style="width: 33%;">${
+                    item.price
+                }</span>
+                                    </div>
+                                </div>`;
+            }
+        });
+        collapseCard.append(collapseText);
+        collapseData.append(collapseCard);
+        item.append(collapsebtn).append(collapseData);
+        $("#collapseInfo").append(item);
     }
 }
 

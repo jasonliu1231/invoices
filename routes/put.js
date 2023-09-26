@@ -7,7 +7,7 @@ const Post = require("../controller/post.js");
 const Common = require("../controller/common.js");
 
 router.post("/company", async function (req, res, next) {
-    const userid = req.headers['userid'];
+    const userid = req.headers["userid"];
     const body = req.body;
     const db = new DB();
     const client = await db.connectpgdb();
@@ -37,7 +37,7 @@ router.post("/company", async function (req, res, next) {
 });
 
 router.post("/customer/:id", async function (req, res, next) {
-    const userid = req.headers['userid'];
+    const userid = req.headers["userid"];
     const body = req.body;
     const id = req.params.id;
     const db = new DB();
@@ -49,7 +49,7 @@ router.post("/customer/:id", async function (req, res, next) {
         if (!result.customerupdate) {
             throw "權限不足";
         }
-        result = await common.checkid(client, 'customer', id);
+        result = await common.checkid(client, "customer", id);
         if (!result) {
             throw "id 不存在，請再次確認是否正確！";
         }
@@ -64,7 +64,7 @@ router.post("/customer/:id", async function (req, res, next) {
 });
 
 router.post("/product/:id", async function (req, res, next) {
-    const userid = req.headers['userid'];
+    const userid = req.headers["userid"];
     const body = req.body;
     const id = req.params.id;
     const db = new DB();
@@ -76,7 +76,7 @@ router.post("/product/:id", async function (req, res, next) {
         if (!result.productsupdate) {
             throw "權限不足";
         }
-        result = await common.checkid(client, 'product', id);
+        result = await common.checkid(client, "product", id);
         if (!result) {
             throw "id 不存在，請再次確認是否正確！";
         }
@@ -91,7 +91,7 @@ router.post("/product/:id", async function (req, res, next) {
 });
 
 router.post("/user/:id", async function (req, res, next) {
-    const userid = req.headers['userid'];
+    const userid = req.headers["userid"];
     const body = req.body;
     const id = req.params.id;
     const db = new DB();
@@ -100,15 +100,23 @@ router.post("/user/:id", async function (req, res, next) {
         // 檢查權限
         const common = new Common();
         let result = await common.permis(client, userid);
+        let justMyself = false;
         if (!result.usersupdate && userid != id) {
             throw "權限不足";
+        } else if (!result.usersupdate && userid === id) {
+            justMyself = true
         }
-        result = await common.checkid(client, 'users', id);
+        result = await common.checkid(client, "users", id);
         if (!result) {
             throw "id 不存在，請再次確認是否正確！";
         }
         const put = new Put();
-        await put.user(client, body, id);
+        if (justMyself) {
+            await put.user(client, body, id);
+        } else {
+            await put.user(client, body, id);
+            await put.permis(client, body, id);
+        }
         res.send();
     } catch (err) {
         res.status(404).send(err);

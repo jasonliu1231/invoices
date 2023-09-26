@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%-include('head') %>
+</head>
+
+<body>
+  <%-include('navbar') %>
+    <%-include('modal') %>
+      <%-include('productsList') %>
+        <div class="container mt-5">
+          <div class="content p-lg-5 p-sm-2">
+            <h1 class="lh-lg w-100">開立發票</h1>
+            <!-- 發票設定 -->
+            <div class="d-flex">
+              <div class="accordion p-1 w-50" id="">
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                      data-bs-target="#panelsStayOpen-invoiceType" aria-expanded="true"
+                      aria-controls="panelsStayOpen-invoiceType">
+                      發票類型
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-invoiceType" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
+                      <select id="typelist2" class="form-select m-1">
+                        <option value="0.05" data-type="07">一般發票</option>
+                        <option value="0.05" data-type="08">銀行業、保險業經營銀行、保險本業之銷售額</option>
+                        <option value="0.02" data-type="08">其他專屬本業之銷售額(不含銀行業、保險業經營銀行、保險本業收入)
+                        </option>
+                        <option value="0.05" data-type="08">非專屬本業之銷售額</option>
+                        <option value="0.01" data-type="08">保險業之再保費收入</option>
+                        <option value="0.15" data-type="08">夜總會、有娛樂節目之餐飲店</option>
+                        <option value="0.25" data-type="08">酒家及有陪侍服務之茶室、咖啡廳、酒吧等</option>
+                      </select>
+                      <div class="input-group m-1">
+                        <span class="input-group-text" style="width: 100px;">日期</span>
+                        <input id="date" type="date" class="form-control">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                      data-bs-target="#panelsStayOpen-buyer" aria-expanded="true" aria-controls="panelsStayOpen-buyer">
+                      買家資訊
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-buyer" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
+                      <div class="input-group m-1">
+                        <input id="customerCondition" type="text" class="form-control"
+                          placeholder="關聯搜尋，姓名、電話號碼、手機號碼、統一編號、註記">
+                        <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                          onclick="searchCustomer('invoice')"><img width="15" src="/images/search.png" alt=""></button>
+                      </div>
+                      <div class="input-group m-1">
+                        <span class="input-group-text" style="width: 100px;">統一編號</span>
+                        <input id="unum" type="text" class="form-control">
+                        <span class="input-group-text" style="width: 100px;">名稱</span>
+                        <input id="name" type="text" class="form-control">
+                      </div>
+                      <div class="input-group m-1">
+                        <span class="input-group-text" style="width: 100px;">電子郵件</span>
+                        <input id="email" type="text" class="form-control">
+                        <span class="input-group-text" style="width: 100px;">電話</span>
+                        <input id="tel" type="text" class="form-control">
+                      </div>
+                      <div class="input-group m-1">
+                        <span class="input-group-text" style="width: 100px;">地址</span>
+                        <input id="address" type="text" class="form-control">
+                      </div>
+                      <div class="input-group m-1">
+                        <span class="input-group-text" style="width: 100px;">載具條碼</span>
+                        <input id="carrierid" type="text" class="form-control">
+                        <span class="input-group-text" style="width: 100px;">捐贈碼</span>
+                        <input id="npoban" type="text" class="form-control">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                      data-bs-target="#panelsStayOpen-other" aria-expanded="false" aria-controls="panelsStayOpen-other">
+                      其他設定
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-other" class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                      <div class="input-group m-1">
+                        <span class="input-group-text" style="width: 100px;">通關方式</span>
+                        <select id="customsClearanceMark" class="form-select">
+                          <option></option>
+                          <option value="0">非經海關出口</option>
+                          <option value="1">經海關出口</option>
+                        </select>
+                        <span class="input-group-text" style="width: 100px;">彙開註記</span>
+                        <div class="input-group-text">
+                          <input class="form-check-input" type="checkbox">
+                        </div>
+                      </div>
+                      <div class="input-group m-1">
+                        <span class="input-group-text" style="width: 100px;">相關號碼</span>
+                        <input id="" type="text" class="form-control">
+                        <span class="input-group-text" style="width: 100px;">發票備註</span>
+                        <input id="" type="text" class="form-control">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="accordion p-1 w-50" id="">
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                      data-bs-target="#panelsStayOpen-product" aria-expanded="true"
+                      aria-controls="panelsStayOpen-product">
+                      商品
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-product" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
+                      <div class="d-flex">
+                        <button class="btn btn-outline-primary w-50 m-1" type="button" data-bs-toggle="offcanvas"
+                          data-bs-target="#offcanvasWithProducts" aria-controls="offcanvasWithProducts">挑選商品</button>
+                        <div class="input-group w-50 m-1">
+                          <input id="productCondition" type="text" class="form-control" placeholder="關聯搜尋，商品名稱編號">
+                          <button class="btn btn-outline-secondary" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal" onclick="searchProductFromInvoice()"><img width="15"
+                              src="/images/search.png" alt=""></button>
+                        </div>
+                      </div>
+
+                      <table class="table table-bordered">
+                        <thead class="text-center">
+                          <tr>
+                            <td>品項</td>
+                            <td>單價</td>
+                            <td>數量</td>
+                            <td>小計</td>
+                          </tr>
+                        </thead>
+                        <tbody id="productsItemList">
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                      data-bs-target="#panelsStayOpen-amount" aria-expanded="true"
+                      aria-controls="panelsStayOpen-amount">
+                      合計
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-amount" class="accordion-collapse collapse show">
+                    <div class="accordion-body">
+                      <div class="input-group m-1">
+                        <span class="input-group-text" style="width: 100px;">課稅別</span>
+                        <select id="taxType" class="form-select" onchange="setTaxRate()">
+                          <option value="1">應稅</option>
+                          <option value="2">零稅</option>
+                          <option value="3">免稅</option>
+                        </select>
+                      </div>
+                      <div class="input-group m-1">
+                        <span class="input-group-text" style="width: 100px;">應稅總額</span>
+                        <input id="salesAmount" type="text" class="form-control" readonly>
+                        <span class="input-group-text" style="width: 100px;">稅率</span>
+                        <input id="taxRate" type="text" class="form-control" value="0.05" readonly>
+                      </div>
+                      <div class="input-group m-1">
+                        <span class="input-group-text" style="width: 100px;">零稅總額</span>
+                        <input id="zeroTaxSalesAmount" type="text" class="form-control" readonly>
+                        <span class="input-group-text" style="width: 100px;">營業稅</span>
+                        <input id="taxAmount" type="text" class="form-control" readonly>
+                      </div>
+                      <div class="input-group m-1">
+                        <span class="input-group-text" style="width: 100px;">免稅總額</span>
+                        <input id="freeTaxSalesAmount" type="text" class="form-control" readonly>
+                        <span class="input-group-text" style="width: 100px;">總計</span>
+                        <input id="totalAmount" type="text" class="form-control" readonly>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="input-group mt-2">
+                  <div class="input-group-text w-25">
+                    <label class="me-3 p-2" for="detail" style="cursor: pointer;">列印明細</label>
+                    <input id="detail" class="form-check-input" type="checkbox" style="cursor: pointer;">
+                  </div>
+                  <button class="btn btn-primary w-75" type="button">開立</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+</body>
+
+</html>

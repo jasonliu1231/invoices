@@ -1,51 +1,5 @@
 $(async function () {
-    const userid = localStorage.getItem("id");
-    const config = {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            userid: userid
-        }
-    };
-    const response = await fetch(`/get/product`, config);
-    if (!response.ok) {
-        const errmsg = await response.text();
-        $("#errorMsg").html(errmsg);
-    }
-
-    const data = await response.json();
-    const categorys = new Set();
-    data.forEach((item) => {
-        categorys.add(item.category);
-    });
-    for (let category of categorys.keys()) {
-        const option = $(`<option value="${category}"></option>`);
-        $("#typelist").append(option);
-        const item = $("<div></div>");
-        const collapsebtn = `<button class="btn btn-outline-secondary btn-sm my-2" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#${category}" aria-expanded="false" aria-controls="collapseExample">
-                        ${category}
-                    </button>`;
-        const collapseData = $(`<div class="collapse" id="${category}"></div>`);
-        const collapseCard = $(`<div class="card card-body"></div>`);
-        let collapseText = "";
-        data.forEach((item) => {
-            console.log(item);
-            if (item.category === category) {
-                collapseText += `<div data-bs-dismiss="offcanvas" aria-label="Close" class="p-1" style="cursor: pointer;" onclick="selectproduct('${item.id}')">
-                                    <div class="d-flex collapseText">
-                                        <span class="text-nowrap text-truncate" data-toggle="tooltip" title="${item.name}" style="width: 33%;">${item.name}</span>
-                                        <span class="text-nowrap text-truncate" data-toggle="tooltip" title="${item.unit}" style="width: 33%;">${item.unit ? item.unit : ""}</span>
-                                        <span class="text-nowrap text-truncate" data-toggle="tooltip" title="${item.price}" style="width: 33%;">$${item.price}</span>
-                                    </div>
-                                </div>`;
-            }
-        });
-        collapseCard.append(collapseText);
-        collapseData.append(collapseCard);
-        item.append(collapsebtn).append(collapseData);
-        $("#collapseInfo").append(item);
-    }
+    searchProduct();
 });
 
 async function selectproduct(id) {
@@ -175,6 +129,38 @@ async function deleteProduct() {
             const errmsg = await response.text();
             alertBox("error", errmsg);
         }
+        const token = localStorage.getItem("token");
+        alertBox("success");
+        setTimeout(() => {
+            window.location.href = `/products/${token}`;
+        }, 1500);
+    }
+}
+
+async function changeCategory() {
+    const typelist2 = $("#typelist2").val() || null;
+    const newName = $("#newName").val() || null;
+    const userid = localStorage.getItem("id");
+
+    if (!newName) {
+        alertBox("warning", "更改名稱欄位不可以是空的！");
+        $("#newName").addClass("border-danger");
+        return;
+    }
+
+    const config = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            userid: userid
+        },
+        body: JSON.stringify({ typelist2, newName })
+    };
+    const response = await fetch(`/patch/product`, config);
+    if (!response.ok) {
+        const errmsg = await response.text();
+        $("#errorMsg").html(errmsg);
+    } else {
         const token = localStorage.getItem("token");
         alertBox("success");
         setTimeout(() => {

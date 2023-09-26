@@ -74,17 +74,23 @@ class Put {
 
     async user(client, body, id) {
         try {
-            client.query("BEGIN");
             let sql = `UPDATE users SET name=$1, disabled=$2 WHERE id=$3;`;
             let params = [body.name, body.type, id];
             await client.query(sql, params);
-            sql = `UPDATE permis
+        } catch (err) {
+            throw "連線資料庫錯誤！原因：" + err;
+        }
+    }
+
+    async permis(client, body, id) {
+        try {
+            let sql = `UPDATE permis
                 SET companyupdate=$1, customercreate=$2, customerupdate=$3, customerread=$4, customerdelete=$5, 
                     productscreate=$6, productsupdate=$7, productsread=$8, productsdelete=$9, 
                     invoicecreate=$10, invoiceupdate=$11, invoiceread=$12, invoicedelete=$13, 
                     userscreate=$14, usersupdate=$15, usersread=$16, usersdelete=$17
                 WHERE userid=$18;`;
-            params = [
+            let params = [
                 body.companyupdate,
                 body.customercreate,
                 body.customerupdate,
@@ -105,7 +111,6 @@ class Put {
                 id
             ];
             await client.query(sql, params);
-            client.query("COMMIT");
         } catch (err) {
             throw "連線資料庫錯誤！原因：" + err;
         }
