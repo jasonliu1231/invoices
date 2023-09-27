@@ -161,6 +161,16 @@ class Post {
             throw "連線資料庫錯誤！原因：" + err;
         }
     }
+
+    async invoice(client, body) {
+        try {
+            client.query("BEGIN");
+            
+            client.query("COMMIT");
+        } catch (err) {
+            throw "連線資料庫錯誤！原因：" + err;
+        }
+    }
 }
 
 module.exports = Post;

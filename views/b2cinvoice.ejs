@@ -13,8 +13,8 @@
           <div class="content p-lg-5 p-sm-2">
             <h1 class="lh-lg w-100">開立發票</h1>
             <!-- 發票設定 -->
-            <div class="d-flex">
-              <div class="accordion p-1 w-50" id="">
+            <div class="d-xl-flex">
+              <div class="accordion p-1 w-xl-50" id="">
                 <div class="accordion-item">
                   <h2 class="accordion-header">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
@@ -25,11 +25,10 @@
                   </h2>
                   <div id="panelsStayOpen-invoiceType" class="accordion-collapse collapse show">
                     <div class="accordion-body">
-                      <select id="typelist2" class="form-select m-1">
+                      <select id="invoiceType" class="form-select m-1" onchange="setTaxRate()">
                         <option value="0.05" data-type="07">一般發票</option>
                         <option value="0.05" data-type="08">銀行業、保險業經營銀行、保險本業之銷售額</option>
-                        <option value="0.02" data-type="08">其他專屬本業之銷售額(不含銀行業、保險業經營銀行、保險本業收入)
-                        </option>
+                        <option value="0.02" data-type="08">其他專屬本業之銷售額(不含銀行業、保險業經營銀行、保險本業收入)</option>
                         <option value="0.05" data-type="08">非專屬本業之銷售額</option>
                         <option value="0.01" data-type="08">保險業之再保費收入</option>
                         <option value="0.15" data-type="08">夜總會、有娛樂節目之餐飲店</option>
@@ -37,7 +36,7 @@
                       </select>
                       <div class="input-group m-1">
                         <span class="input-group-text" style="width: 100px;">日期</span>
-                        <input id="date" type="date" class="form-control">
+                        <input id="invoiceDate" type="date" class="form-control">
                       </div>
                     </div>
                   </div>
@@ -79,6 +78,17 @@
                         <span class="input-group-text" style="width: 100px;">捐贈碼</span>
                         <input id="npoban" type="text" class="form-control">
                       </div>
+                      <div class="input-group m-1">
+                        <input id="id" type="text" class="form-control d-none">
+                        <span class="input-group-text" style="width: 100px;">發票接收</span>
+                        <select id="type" class="form-select" onchange="setTaxRate()">
+                          <option value="0">紙本發票</option>
+                          <option value="1">email</option>
+                          <option value="2">使用載具</option>
+                          <option value="3">會員載具</option>
+                          <option value="4">捐贈</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -100,20 +110,20 @@
                         </select>
                         <span class="input-group-text" style="width: 100px;">彙開註記</span>
                         <div class="input-group-text">
-                          <input class="form-check-input" type="checkbox">
+                          <input id="groupMark" class="form-check-input" type="checkbox">
                         </div>
                       </div>
                       <div class="input-group m-1">
                         <span class="input-group-text" style="width: 100px;">相關號碼</span>
-                        <input id="" type="text" class="form-control">
+                        <input id="relateNumber" type="text" class="form-control">
                         <span class="input-group-text" style="width: 100px;">發票備註</span>
-                        <input id="" type="text" class="form-control">
+                        <input id="mainRemark" type="text" class="form-control">
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="accordion p-1 w-50" id="">
+              <div class="accordion p-1 w-xl-50" id="">
                 <div class="accordion-item">
                   <h2 class="accordion-header">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
@@ -128,7 +138,7 @@
                         <button class="btn btn-outline-primary w-50 m-1" type="button" data-bs-toggle="offcanvas"
                           data-bs-target="#offcanvasWithProducts" aria-controls="offcanvasWithProducts">挑選商品</button>
                         <div class="input-group w-50 m-1">
-                          <input id="productCondition" type="text" class="form-control" placeholder="關聯搜尋，商品名稱編號">
+                          <input id="productCondition" type="text" class="form-control" placeholder="搜尋名稱、編號、條碼">
                           <button class="btn btn-outline-secondary" data-bs-toggle="modal"
                             data-bs-target="#exampleModal" onclick="searchProductFromInvoice()"><img width="15"
                               src="/images/search.png" alt=""></button>
@@ -166,6 +176,7 @@
                           <option value="1">應稅</option>
                           <option value="2">零稅</option>
                           <option value="3">免稅</option>
+                          <option value="4">應稅(特種稅率)</option>
                         </select>
                       </div>
                       <div class="input-group m-1">
@@ -190,11 +201,12 @@
                   </div>
                 </div>
                 <div class="input-group mt-2">
-                  <div class="input-group-text w-25">
-                    <label class="me-3 p-2" for="detail" style="cursor: pointer;">列印明細</label>
-                    <input id="detail" class="form-check-input" type="checkbox" style="cursor: pointer;">
-                  </div>
-                  <button class="btn btn-primary w-75" type="button">開立</button>
+                  <button class="btn btn-outline-danger w-25" type="button" onclick="clearInvoice()">清空欄位</button>
+                  <span class="input-group-text w-25 justify-content-center" style="cursor: pointer;" onclick="detailClick(event)">
+                    <label class="me-2" for="statement" style="cursor: pointer;">列印明細</label>
+                    <input id="statement" class="form-check-input" type="checkbox" style="cursor: pointer;"> 
+                  </span>
+                  <button class="btn btn-primary w-50" type="button" onclick="saveInvoice()">開立</button>
                 </div>
               </div>
             </div>

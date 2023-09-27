@@ -4,7 +4,7 @@ $(async function () {
     if (token) {
         const response = await fetch(`/login/${token}`);
         if (response.ok) {
-            window.location.href = `/company/${token}`;
+            window.location.href = `/b2cinvoice/${token}`;
         }
     }
     $("body").show();
@@ -13,12 +13,18 @@ $(async function () {
 $(document).ready(function () {
     $(document).on("keydown", function (event) {
         if (event.code === "Enter") {
-            login();
+            userLogin();
         }
     });
 });
 
-async function login() {
+function adminLogin() {
+    const user = `admin`;
+    const password = `admin`;
+    login(user, password)
+}
+
+function userLogin() {
     const regex = /[A-Za-z0-9]/;
     const user = $("#user").val();
     const password = $("#password").val();
@@ -41,6 +47,10 @@ async function login() {
     } else {
         $("#password").removeClass("border-danger");
     }
+    login(user, password)
+}
+
+async function login(user, password) {
     const config = {
         method: "POST",
         headers: {
@@ -54,7 +64,7 @@ async function login() {
         window.localStorage.setItem("token", data.token);
         window.localStorage.setItem("name", data.name);
         window.localStorage.setItem("id", data.id);
-        window.location.href = `/company/${data.token}`;
+        window.location.href = `/b2cinvoice/${data.token}`;
     } else {
         const errmsg = await response.text();
         alertBox("error", errmsg);

@@ -13,6 +13,7 @@ const putRouter = require("./routes/put");
 const postRouter = require("./routes/post");
 const deleteRouter = require("./routes/delete");
 const patchRouter = require("./routes/patch");
+const printRouter = require("./routes/print");
 
 const app = express();
 const port = 3000;
@@ -60,6 +61,7 @@ app.use("/put", putRouter);
 app.use("/post", postRouter);
 app.use("/delete", deleteRouter);
 app.use("/patch", patchRouter);
+app.use("/print", printRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

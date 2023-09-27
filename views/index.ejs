@@ -17,11 +17,13 @@
         <label for="password" class="form-label">密碼</label>
         <input type="password" class="form-control" id="password" placeholder="注意密碼是區分大小寫的" />
       </div>
-      <button id="submit" type="submit" class="btn btn-primary" onclick="login()">
-        Login
+      <button id="submit" type="submit" class="btn btn-primary" onclick="userLogin()">
+        登入
       </button>
+      <button id="submit" type="submit" class="btn btn-outline-info" onclick="adminLogin()">訪客查看</button>
     </div>
   </div>
 </body>
 <%-include('alert') %>
+
 </html>

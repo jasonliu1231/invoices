@@ -48,7 +48,7 @@ function theadTransition(column) {
 function customerTypeTransition(val) {
     switch (val) {
         case "0":
-            return "寄送紙本發票";
+            return "紙本發票";
         case "1":
             return "email";
         case "2":
@@ -65,7 +65,7 @@ function customerTypeTransition(val) {
 function tableTarget(e) {
     const checked = $(e).children();
     checked.each((index, item) => {
-        const id = $(item).attr("data-name");
+        const id = $(item).data("name");
         if (id === "type") {
             const radio = $("input[name='type']");
             radio.each((index, element) => {
@@ -214,6 +214,9 @@ function alertBox(type, msg) {
     } else if (type === "warning") {
         element = "warningAlert";
         $(`#${element} p`).html(msg);
+    } else if (type === "invoice") {
+        element = "invoiceAlert";
+        $(`#${element} p`).html(msg);
     }
     $(`#${element}`).css("top", "56px");
     if (type === "success" || type === "warning") {
@@ -225,4 +228,9 @@ function alertBox(type, msg) {
 
 function closeAlert(element) {
     $(element).parents('.alert').css("top", "-100%");
+}
+
+function currentTime() {
+    const time = new Date().toLocaleTimeString([], { hour12: false, hourCycle: 'h23' })
+    return time
 }
