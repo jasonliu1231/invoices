@@ -402,7 +402,7 @@ async function saveInvoice() {
         // const data = await response.json();
         alertBox("invoice");
         clearInvoice();
-        // window.open(`/printpdf/${token}`)
+        window.open(`/printpdf/${token}`)
     } else {
         const errmsg = await response.text();
         alertBox("error", errmsg);
