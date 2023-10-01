@@ -10,7 +10,9 @@ class Conndb {
             database: conn.database,
             password: conn.password,
             port: conn.port,
-            ssl: true
+            ssl: {
+                rejectUnauthorized: false // 禁用SSL驗證
+            }
         });
         try {
             const client = await pool.connect();
