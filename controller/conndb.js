@@ -10,7 +10,7 @@ class Conndb {
             database: conn.database,
             password: conn.password,
             port: conn.port,
-            // ssl: true
+            ssl: false
         });
         try {
             const client = await pool.connect();
