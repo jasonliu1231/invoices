@@ -5,7 +5,7 @@ const Post = require("../controller/post.js");
 const Common = require("../controller/common.js");
 
 router.post("/customer", async function (req, res, next) {
-    const userid = req.headers['userid'];
+    const userid = req.headers["userid"];
     const body = req.body;
     const db = new DB();
     const client = await db.connectpgdb();
@@ -27,7 +27,7 @@ router.post("/customer", async function (req, res, next) {
 });
 
 router.post("/product", async function (req, res, next) {
-    const userid = req.headers['userid'];
+    const userid = req.headers["userid"];
     const body = req.body;
     const db = new DB();
     const client = await db.connectpgdb();
@@ -49,7 +49,7 @@ router.post("/product", async function (req, res, next) {
 });
 
 router.post("/user", async function (req, res, next) {
-    const userid = req.headers['userid'];
+    const userid = req.headers["userid"];
     const body = req.body;
     const db = new DB();
     const client = await db.connectpgdb();
@@ -71,7 +71,7 @@ router.post("/user", async function (req, res, next) {
 });
 
 router.post("/track", async function (req, res, next) {
-    const userid = req.headers['userid'];
+    const userid = req.headers["userid"];
     const body = req.body;
     const db = new DB();
     const client = await db.connectpgdb();
@@ -93,11 +93,10 @@ router.post("/track", async function (req, res, next) {
 });
 
 router.post("/invoice", async function (req, res, next) {
-    const userid = req.headers['userid'];
+    const userid = req.headers["userid"];
     const body = req.body;
     const db = new DB();
     const client = await db.connectpgdb();
-    console.log(body)
     try {
         // 檢查權限
         const common = new Common();
@@ -106,12 +105,8 @@ router.post("/invoice", async function (req, res, next) {
             throw "權限不足";
         }
         const post = new Post();
-        await post.invoice(client, body);
-        // 需要生成發票樣式
-        if (body.type === '0' || body.type === '1') {
-
-        }
-        res.send();
+        const data = await post.invoice(client, userid, body);
+        res.send(data);
     } catch (error) {
         res.status(404).send(error);
     } finally {

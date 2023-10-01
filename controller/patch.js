@@ -24,6 +24,16 @@ class Patch {
             throw "連線資料庫錯誤！原因：" + err;
         }
     }
+
+    async invoicePrint(client, id) {
+        try {
+            let sql = `UPDATE invoice SET isprint=true WHERE id=$1`;
+            let params = [id];
+            await client.query(sql, params);
+        } catch (err) {
+            throw "連線資料庫錯誤！原因：" + err;
+        }
+    }
 }
 
 module.exports = Patch;

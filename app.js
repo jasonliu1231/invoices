@@ -14,6 +14,7 @@ const postRouter = require("./routes/post");
 const deleteRouter = require("./routes/delete");
 const patchRouter = require("./routes/patch");
 const printRouter = require("./routes/print");
+const XMLRouter = require("./routes/creatxml");
 
 const app = express();
 const port = 3000;
@@ -62,6 +63,7 @@ app.use("/post", postRouter);
 app.use("/delete", deleteRouter);
 app.use("/patch", patchRouter);
 app.use("/print", printRouter);
+app.use("/creatxml", XMLRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

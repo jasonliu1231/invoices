@@ -1,14 +1,44 @@
 $(async function () {
     searchProduct();
-    setDateTody();
+    setDateToday();
 });
 
-function setDateTody() {
+async function setDateToday() {
     const date = new Date();
     const today = `${date.getFullYear()}-${(date.getMonth() + 1)
         .toString()
         .padStart(2, 0)}-${date.getDate().toString().padStart(2, 0)}`;
     $("#invoiceDate").val(today);
+
+    const userid = localStorage.getItem("id");
+    // 取得發票最後時間
+    const config = {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            userid: userid
+        }
+    };
+
+    const response = await fetch("/get/invoiceLastDate", config);
+    if (!response.ok) {
+        const errmsg = await response.text();
+        alertBox("error", errmsg);
+    } else {
+        const data = await response.text();
+        if (data != "") {
+            let date = new Date(data);
+            $("#invoiceDate").attr(
+                "min",
+                `${date.getFullYear()}-${(date.getMonth() + 1)
+                    .toString()
+                    .padStart(2, 0)}-${date
+                    .getDate()
+                    .toString()
+                    .padStart(2, 0)}`
+            );
+        }
+    }
 }
 
 // selectproduct 在產品頁面有同名的函數，但行為不同
@@ -253,7 +283,7 @@ function getInvoice() {
         // 使用載具
         const carrierid = $("#carrierid").val();
         invoiceMain.printMark = "N";
-        invoiceMain.donateMark = null;
+        invoiceMain.donateMark = "0";
         invoiceMain.npoban = null;
         invoiceMain.carrierId1 = carrierid;
         invoiceMain.carrierId2 = carrierid;
@@ -287,7 +317,7 @@ function getInvoice() {
     } else if (type === "3") {
         // 會員載具 TODO: 會員載具要申請
         invoiceMain.printMark = "N";
-        invoiceMain.donateMark = null;
+        invoiceMain.donateMark = "0";
         invoiceMain.npoban = null;
         invoiceMain.carrierType = ``; // 申請後取得的條碼
         invoiceMain.carrierId1 = ``; // 自訂義的編號
@@ -305,7 +335,7 @@ function getInvoice() {
     } else {
         // 非會挑選買家 紙本發票 或 email
         invoiceMain.printMark = "Y";
-        invoiceMain.donateMark = null;
+        invoiceMain.donateMark = "0";
         invoiceMain.npoban = null;
         invoiceMain.carrierType = null;
         invoiceMain.carrierId1 = null;
@@ -355,7 +385,7 @@ function getInvoice() {
 }
 
 function clearInvoice() {
-    setDateTody();
+    setDateToday();
     $("#invoiceType").val(0.05);
     $("#unum").val("");
     $("#name").val("");
@@ -382,8 +412,8 @@ function clearInvoice() {
 }
 
 async function saveInvoice() {
-    const deta = getInvoice();
-    if (!deta) {
+    const invoiceInfo = getInvoice();
+    if (!invoiceInfo) {
         return;
     }
     const userid = localStorage.getItem("id");
@@ -394,15 +424,28 @@ async function saveInvoice() {
             "Content-Type": "application/json",
             userid: userid
         },
-        body: JSON.stringify(deta)
+        body: JSON.stringify(invoiceInfo)
     };
 
     const response = await fetch("/post/invoice", config);
     if (response.ok) {
-        // const data = await response.json();
-        alertBox("invoice");
+        const data = await response.json();
+        alertBox("invoice", data.inum);
         clearInvoice();
-        window.open(`/printpdf/${token}`)
+
+        const url = `/printpdf/${token}?id=${data.id}&statement=${invoiceInfo.statement}&type=${invoiceInfo.type}`;
+        if (invoiceInfo.type === "0") {
+            // 列印發票
+            window.open(url);
+        } else if (invoiceInfo.type === "1") {
+            // 發送 email
+        } else {
+            if (invoiceInfo.statement) {
+                // 只列印明細
+                window.open(url);
+            }
+        }
+        window.open(`/xmlsample/${token}?id=${data.id}&type=C0401`);
     } else {
         const errmsg = await response.text();
         alertBox("error", errmsg);

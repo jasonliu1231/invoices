@@ -138,6 +138,60 @@ class Get {
             throw "連線資料庫錯誤！原因：" + err;
         }
     }
+
+    async invoiceLastDate(client) {
+        try {
+            const sql = `SELECT date FROM invoice ORDER BY date DESC LIMIT 1`;
+            const result = await client.query(sql);
+            return result.rows[0];
+        } catch (err) {
+            throw "連線資料庫錯誤！原因：" + err;
+        }
+    }
+
+    // 列印所需資料，沒有對外 API
+    async printInfo(client, id) {
+        try {
+            let sql = `SELECT inum, date, "time", randomnumber, totalamount, taxrate, taxamount, (totalamount-taxamount) salesamount, buyerunum, printmark, mainremark, isprint FROM invoice WHERE id=$1`;
+            let params = [id];
+            let result = await client.query(sql, params);
+            const invoiceMain = result.rows[0];
+            sql = `SELECT unitprice, quantity, (unitprice*quantity) amount, productname FROM invoicedetail WHERE invoiceid=$1`;
+            result = await client.query(sql, params);
+            const invoiceDetails = result.rows;
+            sql = `SELECT unum, name, printtype, invoicetitleimage, customname FROM seller`;
+            result = await client.query(sql);
+            const seller = result.rows[0];
+
+            return { invoiceMain, invoiceDetails, seller };
+        } catch (err) {
+            throw "連線資料庫錯誤！原因：" + err;
+        }
+    }
+
+    // XML所需資料，沒有對外 API
+    async C0401Info(client, id) {
+        try {
+            let sql = `SELECT inum, date, "time", tracknumbertype, randomnumber, totalamount, taxtype, taxrate, taxamount, 
+                        (totalamount-taxamount) salesamount, freetaxsalesamount, zerotaxsalesamount, cnoteamount, buyerunum, 
+                        buyername, buyertel, buyermail, buyeraddr, carriertype, carrierid1, carrierid2, mainremark, clearancemark, 
+                        groupmark, printmark, donatemark, npoban
+                    FROM invoice WHERE id=$1`;
+            let params = [id];
+            let result = await client.query(sql, params);
+            const invoiceMain = result.rows[0];
+            sql = `SELECT unitprice, quantity, productname, unit, (unitprice*quantity) amount FROM invoicedetail WHERE invoiceid=$1`;
+            result = await client.query(sql, params);
+            const invoiceDetails = result.rows;
+            sql = `SELECT unum, name, personincharge, companyaddress, tel, facsimilenumber, email, roleremark FROM seller`;
+            result = await client.query(sql);
+            const seller = result.rows[0];
+
+            return { invoiceMain, invoiceDetails, seller };
+        } catch (err) {
+            throw "連線資料庫錯誤！原因：" + err;
+        }
+    }
 }
 
 module.exports = Get;
