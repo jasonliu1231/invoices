@@ -3,7 +3,11 @@
 一個簡單的網頁發票開立系統，用於店家自行列印發票與產生上傳到 turnkey 所需要的 xml 檔案。
 
 [aws 測站](http://invoice.jason1231.com/)
+AWS EC2 + AWS RDS
+
 [vercel 測站](http://invoices.jason1231.com/)
+vercel + ElephantSQL
+
 兩測試站的檔案相同，但是 vercel 可能會有預期以外的錯誤～
 
 API文件：swagger文件(尚未製作)
@@ -32,7 +36,7 @@ API文件：swagger文件(尚未製作)
 ![Alt text](mdImage/image-3.png)
 
 - 點選產品項目，可以顯示出以登入產品，並以類別分類。
-- 店選產品可以將資料帶入欄位中，並修改。
+- 點選產品可以將資料帶入欄位中，並修改。
 
 ![Alt text](mdImage/image-4.png)
 
