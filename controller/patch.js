@@ -11,7 +11,7 @@ class Patch {
             params = [body.nwepass, id, body.oldpassword];
             await client.query(sql, params);
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -21,7 +21,7 @@ class Patch {
             let params = [body.newName, body.typelist2];
             await client.query(sql, params);
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -31,7 +31,41 @@ class Patch {
             let params = [id];
             await client.query(sql, params);
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
+        }
+    }
+
+    async voidinvoice(client, id, body) {
+        try {
+            let sql = `UPDATE invoice SET voiddate=$1, voidtime=$2, voidreason=$3, voiddnum=$4, voidremark=$5, state='2' WHERE id=$6`;
+            let params = [
+                body.voidDate.replace(/-/g, ""),
+                body.voidTime,
+                body.reason,
+                body.ReturnTaxDocumentNumber,
+                body.remark,
+                id
+            ];
+            await client.query(sql, params);
+        } catch (err) {
+            throw "資料庫錯誤！原因：" + err;
+        }
+    }
+
+    async voidcnote(client, id, body) {
+        try {
+            let sql = `UPDATE cnote SET voiddate=$1, voidtime=$2, voidreason=$3, voiddnum=$4, voidremark=$5, state='2' WHERE id=$6`;
+            let params = [
+                body.voidDate.replace(/-/g, ""),
+                body.voidTime,
+                body.reason,
+                body.ReturnTaxDocumentNumber,
+                body.remark,
+                id
+            ];
+            await client.query(sql, params);
+        } catch (err) {
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 }

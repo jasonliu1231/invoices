@@ -8,6 +8,9 @@ $(async function () {
     $("#logoutLink").attr("href", `/logout/${token}`);
     $("#trackLink").attr("href", `/track/${token}`);
     $("#b2cinvoiceLink").attr("href", `/b2cinvoice/${token}`);
+    $("#cnoteLink").attr("href", `/cnote/${token}`);
+    $("#voidcnoteLink").attr("href", `/voidcnote/${token}`);
+    $("#voidinvoiceLink").attr("href", `/voidinvoice/${token}`);
 });
 
 function theadTransition(column) {
@@ -60,6 +63,48 @@ function customerTypeTransition(val) {
         default:
             return val;
     }
+}
+
+function taxTypeTransition(val) {
+    switch (val) {
+        case "1":
+            return "應稅";
+        case "2":
+            return "零稅";
+        case "3":
+            return "免稅";
+        case "4":
+            return "應稅(特種稅率)";
+        default:
+            return val;
+    }
+}
+
+function apiConfig(method, bodyInfo) {
+    method = method.toUpperCase();
+    const userid = localStorage.getItem("id");
+    const config = {
+        method: method,
+        headers: {
+            "Content-Type": "application/json",
+            userid: userid
+        }
+    };
+
+    if (method === "POST") {
+        config.body = JSON.stringify(bodyInfo);
+    }
+
+    return config;
+}
+
+function getToday() {
+    const date = new Date();
+    const today = `${date.getFullYear()}-${(date.getMonth() + 1)
+        .toString()
+        .padStart(2, 0)}-${date.getDate().toString().padStart(2, 0)}`;
+
+    return today;
 }
 
 function tableTarget(e) {
@@ -227,10 +272,13 @@ function alertBox(type, msg) {
 }
 
 function closeAlert(element) {
-    $(element).parents('.alert').css("top", "-100%");
+    $(element).parents(".alert").css("top", "-100%");
 }
 
 function currentTime() {
-    const time = new Date().toLocaleTimeString([], { hour12: false, hourCycle: 'h23' })
-    return time
+    const time = new Date().toLocaleTimeString([], {
+        hour12: false,
+        hourCycle: "h23"
+    });
+    return time;
 }

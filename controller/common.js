@@ -12,7 +12,7 @@ class Common {
             let result = await client.query(sql, params);
             return result.rows[0];
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -23,7 +23,7 @@ class Common {
             let result = await client.query(sql, params);
             return result.rows[0];
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 }

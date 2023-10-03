@@ -22,7 +22,7 @@ class Post {
             ];
             await client.query(sql, params);
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -48,7 +48,7 @@ class Post {
             ];
             await client.query(sql, params);
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -69,7 +69,7 @@ class Post {
             ];
             await client.query(sql, params);
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -117,7 +117,7 @@ class Post {
             await client.query(sql, params);
             client.query("COMMIT");
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -158,7 +158,7 @@ class Post {
             }
             client.query("COMMIT");
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -260,7 +260,60 @@ class Post {
 
             return { inum, id };
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
+        }
+    }
+
+    async cnote(client, userid, body) {
+        const id = crypto.randomUUID();
+        const cnoteMain = body.main;
+        const cnoteDetails = body.detail;
+
+        try {
+            client.query("BEGIN");
+            let sql = `INSERT INTO cnote(
+                id, cnum, date, invoiceid, state, side, totalamount, taxamount, voiddate, voidtime, voidreason, voidremark, createby)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);`;
+            let params = [
+                id,
+                cnoteMain.cnoteNumber,
+                cnoteMain.cnoteDate.replace(/-/g, ""),
+                cnoteMain.invoiceid,
+                "1",
+                "2",
+                cnoteMain.totalAmount,
+                cnoteMain.taxAmount,
+                null,
+                null,
+                null,
+                null,
+                userid
+            ];
+            await client.query(sql, params);
+
+            for (let i = 0; i < cnoteDetails.length; i++) {
+                const productItem = cnoteDetails[i];
+                sql = `INSERT INTO cnotedetail(
+                    cnoteid, unitprice, quantity, productname, taxamount, unit)
+                    VALUES ($1, $2, $3, $4, $5, $6);`;
+                params = [
+                    id,
+                    productItem.unitprice,
+                    productItem.quantity,
+                    productItem.productname,
+                    productItem.tax,
+                    productItem.unit,
+                ];
+                await client.query(sql, params);
+            }
+
+            sql = `UPDATE invoice SET cnoteamount=$1 WHERE id=$2`;
+            params = [cnoteMain.totalAmount - cnoteMain.taxAmount, cnoteMain.invoiceid];
+            await client.query(sql, params);
+
+            client.query("COMMIT");
+        } catch (err) {
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 }

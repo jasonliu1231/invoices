@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%-include('head') %>
+</head>
+
+<body>
+  <%-include('navbar') %>
+    <div class="container mt-5">
+      <div class="content p-lg-5 p-sm-2">
+        <h1 class="lh-lg">作廢發票</h1>
+        <div class="d-lg-flex mb-3">
+          <div class="p-1 w-100">
+            <div class="input-group">
+              <span class="input-group-text">發票號碼</span>
+              <input id="invoiceNumber" type="text" class="form-control p-2" placeholder="請輸入發票號碼">
+              <button class="btn btn-outline-primary" type="button" onclick="invoice()">搜尋</button>
+            </div>
+          </div>
+          <div class="p-1 w-100">
+            <div class="input-group">
+              <span class="input-group-text">作廢日期</span>
+              <input id="voidDate" type="date" class="form-control p-2">
+            </div>
+          </div>
+        </div>
+
+        <h3>發票資訊</h3>
+        <div class="d-lg-flex">
+          <div class="p-1 w-100">
+            <div class="input-group mb-3">
+              <span class="input-group-text" style="width: 100px;">發票號碼</span>
+              <input id="inum" type="text" class="form-control p-2" readonly>
+            </div>
+          </div>
+          <div class="p-1 w-100">
+            <div class="input-group mb-3">
+              <span class="input-group-text" style="width: 100px;">開立日期</span>
+              <input id="invoiceDate" type="text" class="form-control p-2" readonly>
+            </div>
+          </div>
+
+          <input id="invoiceid" class="d-none" type="text">
+        </div>
+        <div class="d-flex">
+          <div class="p-1 w-100">
+            <div class="input-group mb-3">
+              <span class="input-group-text" style="width: 100px;">作廢文號</span>
+              <input id="ReturnTaxDocumentNumber" type="text" class="form-control p-2">
+            </div>
+          </div>
+          <div class="p-1 w-100">
+            <div class="input-group mb-3">
+              <span class="input-group-text" style="width: 100px;">作廢原因</span>
+              <input id="reason" type="text" class="form-control p-2" placeholder="預設填寫<資訊有誤>">
+            </div>
+          </div>
+        </div>
+        <div class="form-floating">
+          <textarea class="form-control" placeholder="" id="remark" style="height: 100px"></textarea>
+          <label for="remark">作廢備註</label>
+        </div>
+
+        <h3 class="mt-2">統計資訊</h3>
+        <div class="d-lg-flex">
+          <div class="p-1 w-100">
+            <div class="input-group mb-3">
+              <span class="input-group-text" style="width: 100px;">銷售額</span>
+              <input id="salesAmount" type="text" class="form-control p-2" readonly>
+            </div>
+          </div>
+          <div class="p-1 w-100">
+            <div class="input-group mb-3">
+              <span class="input-group-text" style="width: 100px;">稅額</span>
+              <input id="taxAmount" type="text" class="form-control p-2" readonly>
+            </div>
+          </div>
+          <div class="p-1 w-100">
+            <div class="input-group mb-3">
+              <span class="input-group-text" style="width: 100px;">總計</span>
+              <input id="totalAmount" type="text" class="form-control p-2" readonly>
+            </div>
+          </div>
+          <div class="p-1 w-100">
+            <div class="input-group mb-3">
+              <button class="btn btn-danger w-50" type="button" onclick="clearInput()">清除</button>
+              <button class="btn btn-primary w-50" type="button" onclick="saveVoid()">作廢</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</body>
+
+</html>

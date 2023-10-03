@@ -19,7 +19,7 @@ router.get("/company", async function (req, res, next) {
 });
 
 router.get("/customer", async function (req, res, next) {
-    const userid = req.headers['userid'];
+    const userid = req.headers["userid"];
     const db = new DB();
     const client = await db.connectpgdb();
     try {
@@ -40,7 +40,7 @@ router.get("/customer", async function (req, res, next) {
 });
 
 router.get("/customer/:from", async function (req, res, next) {
-    const userid = req.headers['userid'];
+    const userid = req.headers["userid"];
     const from = req.params.from;
     const condition = req.query.condition;
     const db = new DB();
@@ -68,7 +68,7 @@ router.get("/customer/:from", async function (req, res, next) {
 });
 
 router.get("/product", async function (req, res, next) {
-    const userid = req.headers['userid'];
+    const userid = req.headers["userid"];
     const db = new DB();
     const client = await db.connectpgdb();
     try {
@@ -89,7 +89,7 @@ router.get("/product", async function (req, res, next) {
 });
 
 router.get("/product/:id", async function (req, res, next) {
-    const userid = req.headers['userid'];
+    const userid = req.headers["userid"];
     const id = req.params.id;
     const db = new DB();
     const client = await db.connectpgdb();
@@ -111,7 +111,7 @@ router.get("/product/:id", async function (req, res, next) {
 });
 
 router.get("/searchproduct", async function (req, res, next) {
-    const userid = req.headers['userid'];
+    const userid = req.headers["userid"];
     const condition = req.query.condition;
     const db = new DB();
     const client = await db.connectpgdb();
@@ -147,7 +147,7 @@ router.get("/user", async function (req, res, next) {
 });
 
 router.get("/user/:id", async function (req, res, next) {
-    const userid = req.headers['userid'];
+    const userid = req.headers["userid"];
     const id = req.params.id;
     const db = new DB();
     const client = await db.connectpgdb();
@@ -169,7 +169,7 @@ router.get("/user/:id", async function (req, res, next) {
 });
 
 router.get("/track", async function (req, res, next) {
-    const userid = req.headers['userid'];
+    const userid = req.headers["userid"];
     const db = new DB();
     const client = await db.connectpgdb();
     try {
@@ -190,12 +190,70 @@ router.get("/track", async function (req, res, next) {
 });
 
 router.get("/invoiceLastDate", async function (req, res, next) {
-    const userid = req.headers['userid'];
     const db = new DB();
     const client = await db.connectpgdb();
     try {
         const get = new Get();
         result = await get.invoiceLastDate(client);
+        res.send(result);
+    } catch (error) {
+        res.status(404).send(error);
+    } finally {
+        client.release();
+    }
+});
+
+router.get("/invoice", async function (req, res, next) {
+    const userid = req.headers["userid"];
+    const db = new DB();
+    const client = await db.connectpgdb();
+    try {
+        // 檢查權限
+        const common = new Common();
+        let result = await common.permis(client, userid);
+        if (!result.invoiceread) {
+            throw "權限不足";
+        }
+        const get = new Get();
+        result = await get.invoiceForDate(client);
+        res.send(result);
+    } catch (error) {
+        res.status(404).send(error);
+    } finally {
+        client.release();
+    }
+});
+
+router.get("/invoice/:inum", async function (req, res, next) {
+    const userid = req.headers["userid"];
+    const inum = req.params.inum;
+    const type = req.query.type;
+    const db = new DB();
+    const client = await db.connectpgdb();
+    try {
+        // 檢查權限
+        const common = new Common();
+        let result = await common.permis(client, userid);
+        if (!result.invoiceread) {
+            throw "權限不足";
+        }
+        const get = new Get();
+        result = await get.invoiceForInum(client, inum, type);
+        res.send(result);
+    } catch (error) {
+        res.status(404).send(error);
+    } finally {
+        client.release();
+    }
+});
+
+router.get("/cnotenumber", async function (req, res, next) {
+    const today = req.query.today
+    const db = new DB();
+    const client = await db.connectpgdb();
+    try {
+        const get = new Get();
+        result = await get.cnotenumber(client, today);
         res.send(result);
     } catch (error) {
         res.status(404).send(error);

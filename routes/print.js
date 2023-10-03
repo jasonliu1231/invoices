@@ -13,7 +13,7 @@ router.get("/invoicePDF/:id", async (req, res) => {
     const client = await db.connectpgdb();
     try {
         const get = new Get();
-        const printInfo = await get.printInfo(client, id);
+        const printInfo = await get.printInvoiceInfo(client, id);
         const print = new Print();
         print.invoice(res, printInfo);
         const patch = new Patch();
@@ -33,7 +33,7 @@ router.get("/invoiceAndStatementPDF/:id", async (req, res) => {
     const client = await db.connectpgdb();
     try {
         const get = new Get();
-        const printInfo = await get.printInfo(client, id);
+        const printInfo = await get.printInvoiceInfo(client, id);
         const print = new Print();
         print.invoiceAndStatement(res, printInfo);
         const patch = new Patch();
@@ -53,11 +53,29 @@ router.get("/statementPDF/:id", async (req, res) => {
     const client = await db.connectpgdb();
     try {
         const get = new Get();
-        const printInfo = await get.printInfo(client, id);
+        const printInfo = await get.printInvoiceInfo(client, id);
         const print = new Print();
         print.statement(res, printInfo);
         const patch = new Patch();
         patch.invoicePrint(client, id);
+    } catch (error) {
+        res.status(404).send(error);
+    } finally {
+        client.release();
+    }
+});
+
+router.get("/cnote/:id", async (req, res) => {
+    const id = req.params.id;
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", 'inline; filename="example.pdf"');
+    const db = new DB();
+    const client = await db.connectpgdb();
+    try {
+        const get = new Get();
+        const printInfo = await get.printCnoteInfo(client, id);
+        const print = new Print();
+        print.cnote(res, printInfo);
     } catch (error) {
         res.status(404).send(error);
     } finally {

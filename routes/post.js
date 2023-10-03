@@ -114,4 +114,26 @@ router.post("/invoice", async function (req, res, next) {
     }
 });
 
+router.post("/cnote", async function (req, res, next) {
+    const userid = req.headers["userid"];
+    const body = req.body;
+    const db = new DB();
+    const client = await db.connectpgdb();
+    try {
+        // 檢查權限
+        const common = new Common();
+        let result = await common.permis(client, userid);
+        if (!result.invoicecreate) {
+            throw "權限不足";
+        }
+        const post = new Post();
+        post.cnote(client, userid, body);
+        res.send();
+    } catch (error) {
+        res.status(404).send(error);
+    } finally {
+        client.release();
+    }
+});
+
 module.exports = router;

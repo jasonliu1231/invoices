@@ -12,7 +12,7 @@ class Delete {
             await client.query(sql, params);
             await client.query("COMMIT");
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -29,7 +29,7 @@ class Delete {
             await client.query(sql, params);
             await client.query("COMMIT");
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -48,7 +48,7 @@ class Delete {
             await client.query(sql, params);
             await client.query("COMMIT");
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 }

@@ -242,41 +242,18 @@ class Create {
     }
 
     // 開立折讓單XML(D0401)，獨立出來修改全欄位註記
-    async D0401(client, sellerid, id) {
-        // 取得xml需要的欄位
-        await client.query("BEGIN");
-        let sql = `SELECT c.cnum, c.date, c.side, c.totalamount, c.taxamount,
-                    CASE WHEN i.buyerunum IS NULL THEN '0000000000' ELSE i.buyerunum END buyerunum , 
-                    CASE WHEN i.buyername IS NULL THEN randomnum() ELSE i.buyername END buyername, 
-                    i.buyertel, i.buyermail, i.buyeraddr
-                FROM "Cnote" c LEFT JOIN "Invoice" i ON i.id=c.invoiceid WHERE c.sellerid=$1 AND c.id=$2`;
-        let params = [sellerid, id];
-        const m = await client.query(sql, params);
-        sql = `SELECT cd.invoiceindex, cd.unitprice, cd.quantity, cd.taxamount,
-                    i.date, i.inum, id.index, id.productname, id.taxtype, id.unit,
-                    (cd.unitprice * cd.quantity - cd.taxamount) amount
-                FROM "Cnotedetail" cd
-                LEFT JOIN "Cnote" c ON c.id=cd.cnoteid
-                LEFT JOIN "Invoice" i ON i.id=c.invoiceid
-                LEFT JOIN "Invoicedetail" id ON c.invoiceid=id.invoiceid AND cd.invoiceindex=id.index 
-                WHERE cd.cnoteid=$1`;
-        params = [id];
-        const d = await client.query(sql, params);
-        sql = `SELECT unum, name, personincharge, companyaddress, tel, facsimilenumber, email, roleremark
-            FROM seller WHERE id=$1`;
-        params = [sellerid];
-        const s = await client.query(sql, params);
-        await client.query("COMMIT");
+    async D0401(XMLInfo) {
+        const cnoteMain = XMLInfo.cnoteMain;
+        const cnoteDetails = XMLInfo.cnoteDetails;
+        const seller = XMLInfo.seller;
 
-        const main = m.rows[0],
-            seller = s.rows[0];
         let D0401_xml = `<?xml version="1.0" encoding="UTF-8"?>`;
         // 注意版本要是 3.2 版，如果改版要修改版本號
         D0401_xml += `<Allowance xsi:schemaLocation="urn:GEINV:eInvoiceMessage:D0401:3.2 D0401.xsd" xmlns="urn:GEINV:eInvoiceMessage:D0401:3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">`;
         // Main 主體
         D0401_xml += `<Main>`;
-        D0401_xml += `<AllowanceNumber>${main.cnum}</AllowanceNumber>`;
-        D0401_xml += `<AllowanceDate>${main.date}</AllowanceDate>`;
+        D0401_xml += `<AllowanceNumber>${cnoteMain.cnum}</AllowanceNumber>`;
+        D0401_xml += `<AllowanceDate>${cnoteMain.date}</AllowanceDate>`;
         // 賣方資訊
         D0401_xml += `<Seller>`;
         D0401_xml += `<Identifier>${seller.unum}</Identifier>`; // 統一編號，必填
@@ -304,39 +281,39 @@ class Create {
         D0401_xml += `</Seller>`;
         // 買方資訊
         D0401_xml += `<Buyer>`;
-        D0401_xml += `<Identifier>${main.buyerunum}</Identifier>`; // 統一編號，必填
-        D0401_xml += `<Name>${main.buyername}</Name>`; // 名稱，必填
-        if (main.buyeraddr) {
-            D0401_xml += `<Address>${main.buyeraddr}</Address>`; // 地址，選填
+        D0401_xml += `<Identifier>${cnoteMain.buyerunum}</Identifier>`; // 統一編號，必填
+        D0401_xml += `<Name>${cnoteMain.buyername}</Name>`; // 名稱，必填
+        if (cnoteMain.buyeraddr) {
+            D0401_xml += `<Address>${cnoteMain.buyeraddr}</Address>`; // 地址，選填
         }
-        if (main.personincharge) {
-            D0401_xml += `<PersonInCharge>${main.personincharge}</PersonInCharge>`; // 負責人名稱，選填
+        if (cnoteMain.personincharge) {
+            D0401_xml += `<PersonInCharge>${cnoteMain.personincharge}</PersonInCharge>`; // 負責人名稱，選填
         }
-        if (main.buyertel) {
-            D0401_xml += `<TelephoneNumber>${main.buyertel}</TelephoneNumber>`; // 電話號碼，選填
+        if (cnoteMain.buyertel) {
+            D0401_xml += `<TelephoneNumber>${cnoteMain.buyertel}</TelephoneNumber>`; // 電話號碼，選填
         }
-        if (main.facsimilenumber) {
-            D0401_xml += `<FacsimileNumber>${main.facsimilenumber}</FacsimileNumber>`; // 傳真號碼，選填
+        if (cnoteMain.facsimilenumber) {
+            D0401_xml += `<FacsimileNumber>${cnoteMain.facsimilenumber}</FacsimileNumber>`; // 傳真號碼，選填
         }
-        if (main.buyermail) {
-            D0401_xml += `<EmailAddress>${main.buyermail}</EmailAddress>`; // 電子郵件，選填
+        if (cnoteMain.buyermail) {
+            D0401_xml += `<EmailAddress>${cnoteMain.buyermail}</EmailAddress>`; // 電子郵件，選填
         }
-        if (main.buyernumber) {
-            D0401_xml += `<CustomerNumber>${main.buyernumber}</CustomerNumber>`; // 客戶編號，選填
+        if (cnoteMain.buyernumber) {
+            D0401_xml += `<CustomerNumber>${cnoteMain.buyernumber}</CustomerNumber>`; // 客戶編號，選填
         }
         D0401_xml += `</Buyer>`;
         // 折讓種類，必填。 1:買方開立折讓證明單 2:賣方折讓證明通知單
-        D0401_xml += `<AllowanceType>${main.side}</AllowanceType>`;
-        if (main.Attachment) {
-            D0401_xml += `<Attachment>${main.Attachment}</Attachment>`; // 證明附件，選填
+        D0401_xml += `<AllowanceType>${cnoteMain.side}</AllowanceType>`;
+        if (cnoteMain.Attachment) {
+            D0401_xml += `<Attachment>${cnoteMain.Attachment}</Attachment>`; // 證明附件，選填
         }
 
         D0401_xml += `</Main>`;
 
         // 商品 Details
         D0401_xml += `<Details>`;
-        for (let i = 0; i < d.rows.length; i++) {
-            const detail = d.rows[i];
+        for (let i = 0; i < cnoteDetails.length; i++) {
+            const detail = cnoteDetails[i];
             D0401_xml += `<ProductItem>`;
             D0401_xml += `<OriginalInvoiceDate>${detail.date}</OriginalInvoiceDate>`; // 原發票日期，必填
             D0401_xml += `<OriginalInvoiceNumber>${detail.inum}</OriginalInvoiceNumber>`; // 原發票號碼，必填
@@ -360,49 +337,45 @@ class Create {
 
         // 合計 Amount
         D0401_xml += `<Amount>`;
-        D0401_xml += `<TaxAmount>${main.taxamount}</TaxAmount>`; // 營業稅額合計，必填
-        D0401_xml += `<TotalAmount>${main.totalamount}</TotalAmount>`; // 金額合計(不含稅之進貨額合計)，必填
+        D0401_xml += `<TaxAmount>${cnoteMain.taxamount}</TaxAmount>`; // 營業稅額合計，必填
+        D0401_xml += `<TotalAmount>${cnoteMain.totalamount}</TotalAmount>`; // 金額合計(不含稅之進貨額合計)，必填
         D0401_xml += `</Amount>`;
 
         D0401_xml += `</Allowance>`;
 
-        const url = `${process.env.turnkey_upCast}/B2CSTORAGE/ERPOutbox/D0401-${main.date}-${main.cnum}.xml`;
+        // const url = `${process.env.turnkey_upCast}/B2CSTORAGE/ERPOutbox/D0401-${cnoteMain.date}-${cnoteMain.cnum}.xml`;
 
-        fs.writeFileSync(url, D0401_xml, function (err) {
-            if (err) throw err;
-        });
+        // fs.writeFileSync(url, D0401_xml, function (err) {
+        //     if (err) throw err;
+        // });
+        return D0401_xml;
     }
 
     // 作廢發票(C0501)，獨立出來修改全欄位註記
-    async C0501(client, id) {
-        // 取得xml需要的欄位
-        const sql = `SELECT i.inum, i.date, CASE WHEN i.buyerunum IS NULL THEN '0000000000' ELSE i.buyerunum END buyerunum, s.unum, i.voiddate, i.voidtime, i.voidreason, i.voiddnum, i.voidremark FROM "Invoice" i
-            LEFT JOIN seller s ON i.sellerid=s.id WHERE i.id=$1`;
-        const params = [id];
-        const result = await client.query(sql, params);
-        const voidinvoice = result.rows[0];
+    async C0501(XMLInfo) {
         let C0501_xml = `<?xml version="1.0" encoding="UTF-8"?>`;
         C0501_xml += `<CancelInvoice xsi:schemaLocation="urn:GEINV:eInvoiceMessage:C0501:3.2 C0501.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:GEINV:eInvoiceMessage:C0501:3.2">`;
-        C0501_xml += `<CancelInvoiceNumber>${voidinvoice.inum}</CancelInvoiceNumber>`; // 作廢發票號碼，必填
-        C0501_xml += `<InvoiceDate>${voidinvoice.date}</InvoiceDate>`; // 發票日期，必填
-        C0501_xml += `<BuyerId>${voidinvoice.buyerunum}</BuyerId>`; // 買方統一編號，必填
-        C0501_xml += `<SellerId>${voidinvoice.unum}</SellerId>`; // 賣方統一編號，必填
-        C0501_xml += `<CancelDate>${voidinvoice.voiddate}</CancelDate>`; // 作廢日期，必填
-        C0501_xml += `<CancelTime>${voidinvoice.voidtime}</CancelTime>`; // 作廢時間，必填
-        C0501_xml += `<CancelReason>${voidinvoice.voidreason}</CancelReason>`; // 作廢原因，必填
-        if (voidinvoice.documentnumber) {
-            C0501_xml += `<ReturnTaxDocumentNumber>${voidinvoice.voiddnum}</ReturnTaxDocumentNumber>`; // 專案作廢核准文號，選填
+        C0501_xml += `<CancelInvoiceNumber>${XMLInfo.inum}</CancelInvoiceNumber>`; // 作廢發票號碼，必填
+        C0501_xml += `<InvoiceDate>${XMLInfo.date}</InvoiceDate>`; // 發票日期，必填
+        C0501_xml += `<BuyerId>${XMLInfo.buyerunum}</BuyerId>`; // 買方統一編號，必填
+        C0501_xml += `<SellerId>${XMLInfo.unum}</SellerId>`; // 賣方統一編號，必填
+        C0501_xml += `<CancelDate>${XMLInfo.voiddate}</CancelDate>`; // 作廢日期，必填
+        C0501_xml += `<CancelTime>${XMLInfo.voidtime}</CancelTime>`; // 作廢時間，必填
+        C0501_xml += `<CancelReason>${XMLInfo.voidreason}</CancelReason>`; // 作廢原因，必填
+        if (XMLInfo.documentnumber) {
+            C0501_xml += `<ReturnTaxDocumentNumber>${XMLInfo.voiddnum}</ReturnTaxDocumentNumber>`; // 專案作廢核准文號，選填
         }
-        if (voidinvoice.remark) {
-            C0501_xml += `<Remark>${voidinvoice.voidremark}</Remark>`; // 備註，選填
+        if (XMLInfo.remark) {
+            C0501_xml += `<Remark>${XMLInfo.voidremark}</Remark>`; // 備註，選填
         }
         C0501_xml += `</CancelInvoice>`;
 
-        const url = `${process.env.turnkey_upCast}/B2CSTORAGE/ERPOutbox/C0501-${voidinvoice.voiddate}-${voidinvoice.inum}.xml`;
+        // const url = `${process.env.turnkey_upCast}/B2CSTORAGE/ERPOutbox/C0501-${XMLInfo.voiddate}-${XMLInfo.inum}.xml`;
 
-        fs.writeFileSync(url, C0501_xml, function (err) {
-            if (err) throw err;
-        });
+        // fs.writeFileSync(url, C0501_xml, function (err) {
+        //     if (err) throw err;
+        // });
+        return C0501_xml;
     }
 
     // 作廢折讓單(D0501)，獨立出來修改全欄位註記
@@ -429,11 +402,12 @@ class Create {
         }
         D0501_xml += `</CancelAllowance>`;
 
-        const url = `${process.env.turnkey_upCast}/B2CSTORAGE/ERPOutbox/D0501-${voidcnote.date}-${voidcnote.cnum}.xml`;
+        // const url = `${process.env.turnkey_upCast}/B2CSTORAGE/ERPOutbox/D0501-${voidcnote.date}-${voidcnote.cnum}.xml`;
 
-        fs.writeFileSync(url, D0501_xml, function (err) {
-            if (err) throw err;
-        });
+        // fs.writeFileSync(url, D0501_xml, function (err) {
+        //     if (err) throw err;
+        // });
+        return D0501_xml;
     }
 
     // 註銷發票(C0701)

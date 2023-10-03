@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%-include('head') %>
+</head>
+
+<body>
+  <%-include('navbar') %>
+    <div class="container mt-5">
+      <div class="content p-lg-5 p-sm-2">
+        <h1 class="lh-lg">開立折讓</h1>
+        <div class="d-lg-flex mb-3">
+          <div class="p-1 w-100">
+            <div class="input-group">
+              <span class="input-group-text">發票號碼</span>
+              <input id="invoiceNumber" type="text" class="form-control p-2" placeholder="請輸入發票號碼">
+              <button class="btn btn-outline-primary" type="button" onclick="invoice()">搜尋</button>
+            </div>
+          </div>
+          <div class="p-1 w-100">
+            <div class="input-group">
+              <span class="input-group-text">折讓單號</span>
+              <input id="cnoteNumber" type="text" class="form-control p-2">
+              <span class="input-group-text">折讓日期</span>
+              <input id="cnoteDate" type="date" class="form-control p-2">
+            </div>
+          </div>
+        </div>
+
+        <h3>發票資訊</h3>
+        <div class="d-lg-flex">
+          <div class="p-1 w-100">
+            <div class="input-group mb-3">
+              <span class="input-group-text" style="width: 100px;">發票號碼</span>
+              <input id="inum" type="text" class="form-control p-2" readonly>
+            </div>
+          </div>
+          <div class="p-1 w-100">
+            <div class="input-group mb-3">
+              <span class="input-group-text" style="width: 100px;">開立日期</span>
+              <input id="invoiceDate" type="text" class="form-control p-2" readonly>
+            </div>
+          </div>
+          <div class="p-1 w-100">
+            <div class="input-group mb-3">
+              <span class="input-group-text" style="width: 100px;">稅率</span>
+              <input id="taxRate" type="text" class="form-control p-2" readonly>
+            </div>
+          </div>
+          <div class="p-1 w-100">
+            <div class="input-group mb-3">
+              <span class="input-group-text" style="width: 100px;">折讓餘額</span>
+              <input id="cnoteAmount" type="text" class="form-control p-2" readonly>
+            </div>
+          </div>
+          <input id="invoiceid" class="d-none" type="text">
+        </div>
+        <div class="accordion">
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true"
+                aria-controls="panelsStayOpen-collapseOne">
+                商品明細
+              </button>
+            </h2>
+            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+              <div id="details" class="accordion-body d-lg-flex align-content-end flex-wrap">
+              </div>
+            </div>
+          </div>
+        </div>
+        <h3 class="mt-2">統計資訊</h3>
+        <div class="d-lg-flex">
+          <div class="p-1 w-100">
+            <div class="input-group mb-3">
+              <span class="input-group-text" style="width: 100px;">折讓合計</span>
+              <input id="salesAmount" type="text" class="form-control p-2" readonly>
+            </div>
+          </div>
+          <div class="p-1 w-100">
+            <div class="input-group mb-3">
+              <span class="input-group-text" style="width: 100px;">稅額合計</span>
+              <input id="taxAmount" type="text" class="form-control p-2" readonly>
+            </div>
+          </div>
+          <div class="p-1 w-100">
+            <div class="input-group mb-3">
+              <span class="input-group-text" style="width: 100px;">總計</span>
+              <input id="totalAmount" type="text" class="form-control p-2" readonly>
+            </div>
+          </div>
+          <div class="p-1 w-100">
+            <div class="input-group mb-3">
+              <span class="input-group-text w-50 justify-content-center" style="cursor: pointer;"
+                onclick="detailClick(event)">
+                <label class="me-2" for="statement" style="cursor: pointer;">列印明細</label>
+                <input id="statement" class="form-check-input" type="checkbox" style="cursor: pointer;">
+              </span>
+              <button class="btn btn-primary w-50" type="button" onclick="saveCnote()">開立</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</body>
+
+</html>

@@ -4,10 +4,7 @@ $(async function () {
 });
 
 async function setDateToday() {
-    const date = new Date();
-    const today = `${date.getFullYear()}-${(date.getMonth() + 1)
-        .toString()
-        .padStart(2, 0)}-${date.getDate().toString().padStart(2, 0)}`;
+    const today = getToday();
     $("#invoiceDate").val(today);
 
     const userid = localStorage.getItem("id");

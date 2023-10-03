@@ -21,7 +21,7 @@ class Put {
             ];
             await client.query(sql, params);
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -47,7 +47,7 @@ class Put {
             ];
             await client.query(sql, params);
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -68,7 +68,7 @@ class Put {
             ];
             await client.query(sql, params);
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -78,7 +78,7 @@ class Put {
             let params = [body.name, body.type, id];
             await client.query(sql, params);
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -112,7 +112,7 @@ class Put {
             ];
             await client.query(sql, params);
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 }

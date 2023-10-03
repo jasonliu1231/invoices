@@ -8,7 +8,7 @@ class Get {
             const result = await client.query(sql);
             return result.rows;
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -20,7 +20,7 @@ class Get {
             const result = await client.query(sql);
             return result.rows;
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -34,7 +34,7 @@ class Get {
             const result = await client.query(sql, params);
             return result.rows;
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -48,7 +48,7 @@ class Get {
             const result = await client.query(sql, params);
             return result.rows;
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -60,7 +60,7 @@ class Get {
             const result = await client.query(sql);
             return result.rows;
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -73,7 +73,7 @@ class Get {
             const result = await client.query(sql, params);
             return result.rows[0];
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -86,7 +86,7 @@ class Get {
             const result = await client.query(sql, params);
             return result.rows;
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -96,7 +96,7 @@ class Get {
             const result = await client.query(sql);
             return result.rows;
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -113,7 +113,7 @@ class Get {
             const result = await client.query(sql, params);
             return result.rows[0];
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -135,7 +135,7 @@ class Get {
             const result = await client.query(sql, params);
             return result.rows;
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -145,12 +145,52 @@ class Get {
             const result = await client.query(sql);
             return result.rows[0];
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
+        }
+    }
+
+    async invoiceForInum(client, inum, type) {
+        const invoiceInfo = {};
+        try {
+            let sql = `SELECT id, inum, date, cnoteamount, taxrate, totalamount, taxamount FROM invoice WHERE inum=$1`;
+            // 不同情況多一個判斷條件
+            if (type === "cnote") {
+                sql += ` AND (totalamount - taxamount) >= cnoteamount`;
+            } else if (type === "void") {
+                sql += ` AND cnoteamount = 0 AND state != '2'`;
+            }
+            sql += ` LIMIT 1`;
+            let params = [inum];
+            let result = await client.query(sql, params);
+            if (result.rows.length === 0) {
+                throw `查詢不到 ${inum} 的發票！請檢查是否有開立過折讓或是已經作廢！`;
+            }
+            invoiceInfo.invoiceMain = result.rows[0];
+            const invoiceid = result.rows[0].id;
+
+            sql = `SELECT unitprice, quantity, productname, unit FROM invoicedetail WHERE invoiceid=$1`;
+            params = [invoiceid];
+            result = await client.query(sql, params);
+            invoiceInfo.invoiceDetails = result.rows;
+            return invoiceInfo;
+        } catch (err) {
+            throw "資料庫錯誤！原因：" + err;
+        }
+    }
+
+    async cnotenumber(client, today) {
+        try {
+            let sql = `SELECT * FROM cnote WHERE date=$1`;
+            let params = [today];
+            let result = await client.query(sql, params);
+            return result.rows;
+        } catch (err) {
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
     // 列印所需資料，沒有對外 API
-    async printInfo(client, id) {
+    async printInvoiceInfo(client, id) {
         try {
             let sql = `SELECT inum, date, "time", randomnumber, totalamount, taxrate, taxamount, (totalamount-taxamount) salesamount, buyerunum, printmark, mainremark, isprint FROM invoice WHERE id=$1`;
             let params = [id];
@@ -165,7 +205,32 @@ class Get {
 
             return { invoiceMain, invoiceDetails, seller };
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
+        }
+    }
+
+    // 列印所需資料，沒有對外 API
+    async printCnoteInfo(client, id) {
+        try {
+            let sql = `SELECT c.cnum, c.date cdate, c.totalamount, c.taxamount,(c.totalamount-c.taxamount) saleamount, i.inum, i.date idate, i.buyerunum, i.buyername
+                    FROM cnote c LEFT JOIN invoice i ON i.id=c.invoiceid WHERE i.id=$1`;
+            let params = [id];
+            let result = await client.query(sql, params);
+            const cnoteMain = result.rows[0];
+            sql = `SELECT cd.unitprice, cd.quantity, id.productname, (cd.unitprice * cd.quantity) amount FROM cnotedetail cd
+                    LEFT JOIN cnote c ON c.id=cd.cnoteid
+                    LEFT JOIN invoice i ON i.id=c.invoiceid
+                    LEFT JOIN invoicedetail id ON c.invoiceid=id.invoiceid AND id.productname = cd.productname AND id.unit = cd.unit
+                    WHERE i.id=$1`;
+            result = await client.query(sql, params);
+            const cnoteDetails = result.rows;
+            sql = `SELECT unum, name, printtype, invoicetitleimage, customname FROM seller`;
+            result = await client.query(sql);
+            const seller = result.rows[0];
+
+            return { cnoteMain, cnoteDetails, seller };
+        } catch (err) {
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -189,7 +254,62 @@ class Get {
 
             return { invoiceMain, invoiceDetails, seller };
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
+        }
+    }
+
+    // XML所需資料，沒有對外 API
+    async D0401Info(client, id) {
+        try {
+            let sql = `SELECT c.cnum, c.date, c.side, c.totalamount, c.taxamount, i.buyerunum, i.buyername, i.buyertel, i.buyermail, i.buyeraddr
+                FROM cnote c LEFT JOIN invoice i ON i.id=c.invoiceid WHERE i.id=$1`;
+            let params = [id];
+            let result = await client.query(sql, params);
+            const cnoteMain = result.rows[0];
+            sql = `SELECT cd.unitprice, cd.quantity, cd.taxamount, i.date, i.inum, id.productname, i.taxtype, id.unit, (cd.unitprice * cd.quantity - cd.taxamount) amount
+                    FROM cnotedetail cd
+                    LEFT JOIN cnote c ON c.id=cd.cnoteid
+                    LEFT JOIN invoice i ON i.id=c.invoiceid
+                    LEFT JOIN invoicedetail id ON c.invoiceid=id.invoiceid AND id.productname = cd.productname AND id.unit = cd.unit
+                WHERE i.id=$1`;
+            result = await client.query(sql, params);
+            const cnoteDetails = result.rows;
+            sql = `SELECT unum, name, personincharge, companyaddress, tel, facsimilenumber, email, roleremark FROM seller`;
+            result = await client.query(sql);
+            const seller = result.rows[0];
+
+            return { cnoteMain, cnoteDetails, seller };
+        } catch (err) {
+            throw "資料庫錯誤！原因：" + err;
+        }
+    }
+
+    // XML所需資料，沒有對外 API
+    async C0501Info(client, id) {
+        try {
+            const sql = `SELECT i.inum, i.date, CASE WHEN i.buyerunum IS NULL THEN '0000000000' ELSE i.buyerunum END buyerunum, s.unum, i.voiddate, i.voidtime, i.voidreason, i.voiddnum, i.voidremark FROM invoice i
+                        LEFT JOIN seller s ON 1=1 WHERE i.id=$1`;
+            const params = [id];
+            const result = await client.query(sql, params);
+
+            return result.rows[0];
+        } catch (err) {
+            throw "資料庫錯誤！原因：" + err;
+        }
+    }
+
+    // XML所需資料，沒有對外 API
+    async D0501Info(client, id) {
+        try {
+            const sql = `SELECT c.cnum, c.date, CASE WHEN i.buyerunum IS NULL THEN '0000000000' ELSE i.buyerunum END buyerunum, s.unum, c.voiddate, c.voidtime, c.voidreason, c.voidremark FROM cnote c
+                        LEFT JOIN invoice i ON c.invoiceid=i.id
+                        LEFT JOIN seller s ON 1=1 WHERE c.id=$1`;
+            const params = [id];
+            const result = await client.query(sql, params);
+
+            return result.rows[0];
+        } catch (err) {
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 }

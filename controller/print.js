@@ -734,6 +734,218 @@ class Print {
         // 将 PDF 回傳
         doc.pipe(res);
     }
+
+    async cnote(res, printInfo) {
+        const cnote_width = 162,
+            cnote_height = 400 + 20 * printInfo.cnoteDetails.length;
+        let cnote_index = 35;
+        const doc = new PDFDocument({
+            size: [cnote_width, cnote_height]
+        });
+        doc.font(`./fontfamily/msyh.ttf`); // 要找中文字型不然會亂碼
+
+        doc.fontSize(12);
+        // 發票標頭
+        if (printInfo.seller.printtype == 1) {
+            doc.text(`${printInfo.seller.name}`, 0, cnote_index, {
+                width: cnote_width,
+                align: "center"
+            });
+        } else if (printInfo.seller.printtype == 2) {
+            doc.image(printInfo.seller.invoicetitleimage, 10, cnote_index, {
+                fit: [cnote_width - 20, 20],
+                align: "center",
+                valign: "center"
+            });
+        } else if (printInfo.seller.printtype == 3) {
+            doc.text(`${printInfo.seller.customname}`, 0, cnote_index, {
+                width: cnote_width,
+                align: "center"
+            });
+        }
+        cnote_index += 20;
+
+        // 證明聯
+        let text = `營業人銷貨退出、進貨退出或折讓證明聯`,
+            th = doc.heightOfString(text, { width: cnote_width - 30 });
+        doc.text(text, 15, cnote_index, {
+            width: cnote_width - 30,
+            align: "center"
+        });
+        cnote_index += th + 10;
+
+        doc.fontSize(8);
+        // 折讓單日期
+        doc.text(dateStringToDate(printInfo.cnoteMain.cdate), 0, cnote_index, {
+            width: cnote_width,
+            height: 10,
+            align: "center"
+        });
+        cnote_index += 20;
+
+        // 賣方統編
+        doc.text(`賣方統編：${printInfo.seller.unum}`, 15, cnote_index, {
+            width: cnote_width,
+            height: 10
+        });
+        cnote_index += 15;
+
+        // 賣方名稱
+        text = `賣方名稱：${printInfo.seller.name}`;
+        th = doc.heightOfString(text, { width: cnote_width - 30 });
+        doc.text(text, 15, cnote_index, {
+            width: cnote_width - 30,
+            height: 10
+        });
+        cnote_index += 15;
+
+        // 發票開立日期
+        doc.text(dateStringToDate(printInfo.cnoteMain.idate), 15, cnote_index, {
+            width: cnote_width,
+            height: 10
+        });
+        cnote_index += 15;
+
+        // 發票字軌
+        doc.text(`發票號碼：${printInfo.cnoteMain.inum}`, 15, cnote_index, {
+            width: cnote_width,
+            height: 10
+        });
+        cnote_index += 15;
+
+        // 買方統編
+        doc.text(
+            `買方統編：${printInfo.cnoteMain.buyerunum}`,
+            15,
+            cnote_index,
+            {
+                width: cnote_width,
+                height: 10
+            }
+        );
+        cnote_index += 15;
+
+        // 買方名稱
+        doc.text(
+            `買方名稱：${printInfo.cnoteMain.buyername}`,
+            15,
+            cnote_index,
+            {
+                width: cnote_width,
+                height: 10
+            }
+        );
+        cnote_index += 10;
+
+        doc.text(`----------------------------------------`, 0, cnote_index, {
+            height: 1,
+            width: cnote_width,
+            align: "center"
+        });
+        cnote_index += 10;
+
+        // 明細標頭
+        text = `營業人銷貨退出、進貨退出明細`;
+        th = doc.heightOfString(text, { width: cnote_width - 30 });
+        doc.fontSize(12).text(text, 15, cnote_index, {
+            width: cnote_width - 30,
+            align: "center"
+        });
+        cnote_index += th + 20;
+
+        doc.fontSize(8);
+        doc.text(`----------------------------------------`, 0, cnote_index, {
+            height: 1,
+            width: cnote_width,
+            align: "center"
+        });
+        cnote_index += 10;
+
+        // 退貨商品明細
+        for (let i = 0; i < printInfo.cnoteDetails.length; i++) {
+            const info = printInfo.cnoteDetails[i];
+            doc.text(`${info.productname}`, 15, cnote_index, {
+                height: 10,
+                width: cnote_width
+            });
+            cnote_index += 10;
+
+            doc.text(`${info.quantity}`, 35, cnote_index, {
+                height: 10,
+                width: 30
+            });
+            doc.text(`X${info.unitprice}`, 65, cnote_index, {
+                height: 10,
+                width: 50
+            });
+            doc.text(`$${info.amount}`, 115, cnote_index, {
+                height: 10,
+                width: 50
+            });
+            // 加總計算
+            cnote_index += 10;
+        }
+
+        doc.text(`----------------------------------------`, 0, cnote_index, {
+            height: 1,
+            width: cnote_width,
+            align: "center"
+        });
+        cnote_index += 10;
+
+        doc.text(`金額(不含稅之進貨額):`, 15, cnote_index, {
+            height: 10,
+            width: cnote_width - 30,
+            align: "left"
+        });
+        doc.text(`$${printInfo.cnoteMain.saleamount}`, 15, cnote_index, {
+            height: 10,
+            width: cnote_width - 30,
+            align: "right"
+        });
+        cnote_index += 10;
+
+        doc.text(`營業稅額:`, 15, cnote_index, {
+            height: 10,
+            width: cnote_width - 30,
+            align: "left"
+        });
+        doc.text(`$${printInfo.cnoteMain.taxamount}`, 15, cnote_index, {
+            height: 10,
+            width: cnote_width - 30,
+            align: "right"
+        });
+        cnote_index += 10;
+
+        doc.text(`合計:${printInfo.cnoteDetails.length}筆`, 15, cnote_index, {
+            height: 10,
+            width: cnote_width - 30,
+            align: "left"
+        });
+        doc.text(
+            `總金額:$${printInfo.cnoteMain.totalamount}`,
+            15,
+            cnote_index,
+            {
+                height: 10,
+                width: cnote_width - 30,
+                align: "right"
+            }
+        );
+        cnote_index += 20;
+
+        doc.text(`簽收人：`, 15, cnote_index, {
+            height: 10,
+            width: cnote_width - 30,
+            align: "left"
+        });
+        cnote_index += 20;
+
+        // 结束 PDF 流
+        doc.end();
+        // 将 PDF 回傳
+        doc.pipe(res);
+    }
 }
 
 module.exports = Print;

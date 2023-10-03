@@ -7,7 +7,7 @@ class Index {
             const result = await client.query(sql, params);
             return result.rows[0]
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -42,7 +42,7 @@ class Index {
             userInfo.token = token;
             return userInfo;
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 
@@ -52,7 +52,7 @@ class Index {
             const params = [token];
             await client.query(sql, params);
         } catch (err) {
-            throw "連線資料庫錯誤！原因：" + err;
+            throw "資料庫錯誤！原因：" + err;
         }
     }
 }

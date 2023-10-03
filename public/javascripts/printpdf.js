@@ -11,5 +11,7 @@ $(function () {
         $("#PDF").attr("src", `/print/invoicePDF/${id}`);
     } else if (type != "0" && statement === "true") {
         $("#PDF").attr("src", `/print/statementPDF/${id}`);
+    } else {
+        $("#PDF").attr("src", `/print/cnote/${id}`);
     }
 });
