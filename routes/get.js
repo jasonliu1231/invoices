@@ -262,4 +262,26 @@ router.get("/cnotenumber", async function (req, res, next) {
     }
 });
 
+router.get("/cnote/:cnum", async function (req, res, next) {
+    const userid = req.headers["userid"];
+    const cnum = req.params.cnum;
+    const db = new DB();
+    const client = await db.connectpgdb();
+    try {
+        // 檢查權限
+        const common = new Common();
+        let result = await common.permis(client, userid);
+        if (!result.invoiceread) {
+            throw "權限不足";
+        }
+        const get = new Get();
+        result = await get.cnoteForInum(client, cnum);
+        res.send(result);
+    } catch (error) {
+        res.status(404).send(error);
+    } finally {
+        client.release();
+    }
+});
+
 module.exports = router;

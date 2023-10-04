@@ -32,12 +32,12 @@ router.get("/:type/:id", async (req, res) => {
             const get = new Get();
             const D0501Info = await get.D0501Info(client, id);
             const creatxml = new Creatxml();
-            XML = await creatxml.D0501(D0401Info);
+            XML = await creatxml.D0501(D0501Info);
         } else if (type === "E0402") {
             const get = new Get();
-            const D0401Info = await get.D0401Info(client, id);
+            const E0402Info = await get.E0402Info(client, id);
             const creatxml = new Creatxml();
-            XML = await creatxml.D0401(D0401Info);
+            XML = await creatxml.D0401(E0402Info);
         }
 
         res.send(XML);

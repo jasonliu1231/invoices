@@ -153,7 +153,7 @@ class Get {
         const invoiceInfo = {};
         try {
             let sql = `SELECT id, inum, date, cnoteamount, taxrate, totalamount, taxamount FROM invoice WHERE inum=$1`;
-            // 不同情況多一個判斷條件
+            // 不同情況判斷條件不同，折讓要檢查發票可折讓額，作廢要檢查狀態跟是否折讓過。
             if (type === "cnote") {
                 sql += ` AND (totalamount - taxamount) >= cnoteamount`;
             } else if (type === "void") {
@@ -184,6 +184,21 @@ class Get {
             let params = [today];
             let result = await client.query(sql, params);
             return result.rows;
+        } catch (err) {
+            throw "資料庫錯誤！原因：" + err;
+        }
+    }
+
+    async cnoteForInum(client, cnum) {
+        try {
+            let sql = `SELECT c.id, c.cnum, c.date cdate, i.inum, i.date idate, c.totalamount, c.taxamount FROM cnote c
+                        LEFT JOIN invoice i ON c.invoiceid=i.id WHERE cnum=$1`;
+            let params = [cnum];
+            let result = await client.query(sql, params);
+            if (result.rows.length === 0) {
+                throw `查詢不到 ${cnum} 的折讓單！`;
+            }
+            return result.rows[0];
         } catch (err) {
             throw "資料庫錯誤！原因：" + err;
         }

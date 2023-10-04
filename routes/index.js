@@ -20,6 +20,8 @@ router.get(
         "/voidcnote/:token",
         "/printpdf/:token",
         "/xmlsample/:token",
+        "/serchinvoice/:token",
+        "/serchconte/:token",
     ],
     async (req, res) => {
         const token = req.params.token;

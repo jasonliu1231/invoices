@@ -54,12 +54,11 @@ class Patch {
 
     async voidcnote(client, id, body) {
         try {
-            let sql = `UPDATE cnote SET voiddate=$1, voidtime=$2, voidreason=$3, voiddnum=$4, voidremark=$5, state='2' WHERE id=$6`;
+            let sql = `UPDATE cnote SET voiddate=$1, voidtime=$2, voidreason=$3, voidremark=$4, state='2' WHERE id=$5`;
             let params = [
                 body.voidDate.replace(/-/g, ""),
                 body.voidTime,
                 body.reason,
-                body.ReturnTaxDocumentNumber,
                 body.remark,
                 id
             ];

@@ -101,8 +101,12 @@ class Create {
 
         // 買方資訊
         C0401_xml += `<Buyer>`;
-        C0401_xml += `<Identifier>${invoiceMain.buyerunum ? invoiceMain.buyerunum : '0000000000'}</Identifier>`; // 統一編號，必填
-        C0401_xml += `<Name>${invoiceMain.buyername ? invoiceMain.buyername : '0000'}</Name>`; // 名稱，必填
+        C0401_xml += `<Identifier>${
+            invoiceMain.buyerunum ? invoiceMain.buyerunum : "0000000000"
+        }</Identifier>`; // 統一編號，必填
+        C0401_xml += `<Name>${
+            invoiceMain.buyername ? invoiceMain.buyername : "0000"
+        }</Name>`; // 名稱，必填
         if (invoiceMain.buyeraddr) {
             C0401_xml += `<Address>${invoiceMain.buyeraddr}</Address>`; // 地址，選填
         }
@@ -329,7 +333,9 @@ class Create {
             D0401_xml += `<UnitPrice>${detail.unitprice}</UnitPrice>`; // 單價，必填
             D0401_xml += `<Amount>${detail.amount}</Amount>`; // 金額(不含稅之進貨額)，必填
             D0401_xml += `<Tax>${detail.taxamount}</Tax>`; // 營業稅額，必填
-            D0401_xml += `<AllowanceSequenceNumber>${detail.index}</AllowanceSequenceNumber>`; // 折讓證明單明細排列序號，必填
+            D0401_xml += `<AllowanceSequenceNumber>${i
+                .toString()
+                .padStart(3, 0)}</AllowanceSequenceNumber>`; // 折讓證明單明細排列序號，必填
             D0401_xml += `<TaxType>${detail.taxtype}</TaxType>`; // 課稅別，必填
             D0401_xml += `</ProductItem>`;
         }
@@ -379,26 +385,18 @@ class Create {
     }
 
     // 作廢折讓單(D0501)，獨立出來修改全欄位註記
-    async D0501(client, id) {
-        // 取得xml需要的欄位
-        const sql = `SELECT c.cnum, c.date, CASE WHEN i.buyerunum IS NULL THEN '0000000000' ELSE i.buyerunum END buyerunum, s.unum, c.voiddate, c.voidtime, c.voidreason, c.voidremark FROM "Cnote" c
-            LEFT JOIN "Invoice" i ON c.invoiceid=i.id
-            LEFT JOIN seller s ON i.sellerid=s.id WHERE c.id=$1`;
-        const params = [id];
-        const result = await client.query(sql, params);
-
-        const voidcnote = result.rows[0];
+    async D0501(XMLInfo) {
         let D0501_xml = `<?xml version="1.0" encoding="UTF-8"?>`;
         D0501_xml += `<CancelAllowance xsi:schemaLocation="urn:GEINV:eInvoiceMessage:D0501:3.2 D0501.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:GEINV:eInvoiceMessage:D0501:3.2">`;
-        D0501_xml += `<CancelAllowanceNumber>${voidcnote.cnum}</CancelAllowanceNumber>`; // 作廢折讓證明單號碼，必填
-        D0501_xml += `<AllowanceDate>${voidcnote.date}</AllowanceDate>`; // 折讓證明單日期，必填
-        D0501_xml += `<BuyerId>${voidcnote.buyerunum}</BuyerId>`; // 買方統一編號，必填
-        D0501_xml += `<SellerId>${voidcnote.unum}</SellerId>`; // 賣方統一編號，必填
-        D0501_xml += `<CancelDate>${voidcnote.voiddate}</CancelDate>`; // 折讓證明單作廢日期，必填
-        D0501_xml += `<CancelTime>${voidcnote.voidtime}</CancelTime>`; // 折讓證明單作廢時間，必填
-        D0501_xml += `<CancelReason>${voidcnote.voidreason}</CancelReason>`; // 折讓證明單作廢原因，必填
-        if (voidcnote.remark) {
-            D0501_xml += `<Remark>${voidcnote.voidremark}</Remark>`; // 備註，選填
+        D0501_xml += `<CancelAllowanceNumber>${XMLInfo.cnum}</CancelAllowanceNumber>`; // 作廢折讓證明單號碼，必填
+        D0501_xml += `<AllowanceDate>${XMLInfo.date}</AllowanceDate>`; // 折讓證明單日期，必填
+        D0501_xml += `<BuyerId>${XMLInfo.buyerunum}</BuyerId>`; // 買方統一編號，必填
+        D0501_xml += `<SellerId>${XMLInfo.unum}</SellerId>`; // 賣方統一編號，必填
+        D0501_xml += `<CancelDate>${XMLInfo.voiddate}</CancelDate>`; // 折讓證明單作廢日期，必填
+        D0501_xml += `<CancelTime>${XMLInfo.voidtime}</CancelTime>`; // 折讓證明單作廢時間，必填
+        D0501_xml += `<CancelReason>${XMLInfo.voidreason}</CancelReason>`; // 折讓證明單作廢原因，必填
+        if (XMLInfo.remark) {
+            D0501_xml += `<Remark>${XMLInfo.voidremark}</Remark>`; // 備註，選填
         }
         D0501_xml += `</CancelAllowance>`;
 

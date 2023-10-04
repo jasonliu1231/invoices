@@ -11,6 +11,8 @@ $(async function () {
     $("#cnoteLink").attr("href", `/cnote/${token}`);
     $("#voidcnoteLink").attr("href", `/voidcnote/${token}`);
     $("#voidinvoiceLink").attr("href", `/voidinvoice/${token}`);
+    $("#serchinvoiceLink").attr("href", `/serchinvoice/${token}`);
+    $("#serchconteLink").attr("href", `/serchconte/${token}`);
 });
 
 function theadTransition(column) {
