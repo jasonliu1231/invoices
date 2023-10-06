@@ -3,7 +3,6 @@ const Get = require("./get.js");
 const get = new Get();
 class Create {
     async E0402(XMLInfo) {
-        console.log(XMLInfo);
         let E0402_xml = `<?xml version="1.0" encoding="UTF-8"?>
                     <BranchTrackBlank xmlns="urn:GEINV:eInvoiceMessage:E0402:3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:GEINV:eInvoiceMessage:E0402:3.2 E0402.xsd">
                     <Main>
