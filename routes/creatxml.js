@@ -37,7 +37,7 @@ router.get("/:type/:id", async (req, res) => {
             const get = new Get();
             const E0402Info = await get.E0402Info(client, id);
             const creatxml = new Creatxml();
-            XML = await creatxml.D0401(E0402Info);
+            XML = await creatxml.E0402(E0402Info);
         }
 
         res.send(XML);

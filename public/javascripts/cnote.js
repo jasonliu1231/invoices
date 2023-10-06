@@ -1,6 +1,12 @@
 $(async function () {
+    const url = new URL(location.href);
+    const inum = url.searchParams.get("inum");
+    $("#invoiceNumber").val(inum);
+    if (inum) {
+        invoice();
+    }
     getCnoteNumber(new Date());
-    const today = getToday();
+    const today = getDate(new Date());
     $("#cnoteDate").val(today);
 });
 
@@ -170,7 +176,7 @@ async function saveCnote() {
 
     const config = apiConfig("POST", { main, detail });
     const response = await fetch(`/post/cnote`, config);
-    let token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
     if (!response.ok) {
         const errmsg = await response.text();
         alertBox("error", errmsg);

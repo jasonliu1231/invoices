@@ -2,58 +2,44 @@ const fs = require("fs");
 const Get = require("./get.js");
 const get = new Get();
 class Create {
-    async E0402(client, id) {
-        let today = new Date();
-        let date = new Date();
-        date.setMonth(today.getMonth() - 2);
-        let year = today.getFullYear() - 1911,
-            max = year * 100 + today.getMonth() + 1;
-        year = date.getFullYear() - 1911;
-        let min = year * 100 + date.getMonth() + 1; // getMonth() 月份是 0~11 所以多+1
-        let trackinfo = await get.trackinfo(client, id, min, max);
-
-        for (let i = 0; i < trackinfo.length; i++) {
-            let track = trackinfo[i];
-            if (track.usedno < track.endno || track.usedno == null) {
-                let E0402_xml = `<?xml version="1.0" encoding="UTF-8"?>
+    async E0402(XMLInfo) {
+        console.log(XMLInfo);
+        let E0402_xml = `<?xml version="1.0" encoding="UTF-8"?>
                     <BranchTrackBlank xmlns="urn:GEINV:eInvoiceMessage:E0402:3.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:GEINV:eInvoiceMessage:E0402:3.2 E0402.xsd">
                     <Main>
-                        <HeadBan>${track.unum}</HeadBan>
-                        <BranchBan>${track.unum}</BranchBan>
-                        <InvoiceType>${track.type}</InvoiceType>
-                        <YearMonth>${track.yearmonth}</YearMonth>
-                        <InvoiceTrack>${track.tnum}</InvoiceTrack>
+                        <HeadBan>${XMLInfo.unum}</HeadBan>
+                        <BranchBan>${XMLInfo.unum}</BranchBan>
+                        <InvoiceType>${XMLInfo.type}</InvoiceType>
+                        <YearMonth>${XMLInfo.yearmonth}</YearMonth>
+                        <InvoiceTrack>${XMLInfo.tnum}</InvoiceTrack>
                     </Main>
                     <Details>
                         <BranchTrackBlankItem>
                             <InvoiceBeginNo>${
-                                track.usedno
-                                    ? (track.usedno + 1)
+                                XMLInfo.usedno
+                                    ? (XMLInfo.usedno + 1)
                                           .toString()
                                           .padStart(8, "0")
-                                    : track.beginno.toString().padStart(8, "0")
+                                    : XMLInfo.beginno
+                                          .toString()
+                                          .padStart(8, "0")
                             }</InvoiceBeginNo>
-                            <InvoiceEndNo>${track.endno
+                            <InvoiceEndNo>${XMLInfo.endno
                                 .toString()
                                 .padStart(8, "0")}</InvoiceEndNo>
                         </BranchTrackBlankItem>
                     </Details>
                     </BranchTrackBlank>
                 `;
-                let url = `${
-                    process.env.turnkey_upCast
-                }/B2PMESSAGE/ERPOutbox/E0402-${track.unum}-${
-                    track.tnum + track.endno
-                }.xml`;
-                fs.writeFileSync(url, E0402_xml, function (err) {
-                    if (err) throw err;
-                });
-            }
-            let sql = `UPDATE "TrackNumber" SET disabled=true WHERE id=$1;`;
-            let params = [track.id];
-            await client.query(sql, params);
-        }
-        return `資料已全部上傳完成，共上傳 ${trackinfo.length} 筆資料`;
+        // let url = `${
+        //     process.env.turnkey_upCast
+        // }/B2PMESSAGE/ERPOutbox/E0402-${XMLInfo.unum}-${
+        //     XMLInfo.tnum + XMLInfo.endno
+        // }.xml`;
+        // fs.writeFileSync(url, E0402_xml, function (err) {
+        //     if (err) throw err;
+        // });
+        return E0402_xml;
     }
 
     // 開立發票XML(C0401)，獨立出來修改全欄位註記

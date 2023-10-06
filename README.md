@@ -3,30 +3,33 @@
 一個簡單的網頁發票開立系統，用於店家自行列印發票與產生上傳到 turnkey 所需要的 xml 檔案。
 
 [aws 測站](http://invoice.jason1231.com/)
-AWS EC2 + AWS RDS
+AWS EC2 + AWS RDS + jenkins
 
 [vercel 測站](http://invoices.jason1231.com/)
 vercel + ElephantSQL
 
 兩測試站的檔案相同，但是 vercel 可能會有預期以外的錯誤～
 
-API文件：[swagger文件](http://invoice.jason1231.com/api-docs)(尚未製作)
+API文件：[swagger文件](http://invoice.jason1231.com/api-docs)(製作中)
 
 ### 營業人資料
 ![Alt text](mdImage/image.png)
-設定賣家資料，資料會帶入上傳的 xml 中的賣家資訊，下發抬頭設定代表發票列印時可選擇格式。
-- **公司名稱**，代表上方直接顯示公司名稱
-- **企業識別標章**，顯示公司的是圖標
+設定賣家資料，資料會帶入上傳的 xml 中的賣家資訊，發抬頭設定代表發票列印時顯示的樣式。
+- **公司名稱**，代表直接顯示公司名稱
+- **企業識別標章**，顯示公司的圖標貨商標
 - **自訂顯示名稱**，可以自行選擇要顯示的文字
 
 ### 票軌資訊
 ![Alt text](mdImage/image-1.png)
 
 - 設定賣家電子發票票軌資訊，點 ＋ 號可以上傳電子發票票軌的 csv 檔案。
-- 檔案來源請至電子發票整合服務平台申請，並下載檔案。
-- 資料表上顯示票軌資訊，已狀態來區分可否使用，開立發票時會自動從使用中的發票抽取票號。
-- 當基數月份時，會有提醒上傳空白未使用票軌。
-- 上傳空白未使用票軌(尚未製作)
+- 檔案來源請至電子發票整合服務平台申請，並下載 csv 檔案。
+- 資料表上顯示票軌資訊，以狀態來區分可否使用，開立發票時會自動從使用中的發票抽取票號。
+- 當奇數月份時，會有提醒上傳空白未使用票軌。
+
+![Alt text](mdImage/image-30.png)
+
+- 上傳空白未使用票軌，會產出 XML 檔案。
 
 ### 產品資訊
 ![Alt text](mdImage/image-2.png)
@@ -36,11 +39,11 @@ API文件：[swagger文件](http://invoice.jason1231.com/api-docs)(尚未製作)
 ![Alt text](mdImage/image-3.png)
 
 - 點選產品項目，可以顯示出以登入產品，並以類別分類。
-- 點選產品可以將資料帶入欄位中，並修改。
+- 點選產品可以將資料帶入欄位中，進行設定。
 
 ![Alt text](mdImage/image-4.png)
 
-- 修改產品名稱，可以一次性修該所以同類別的商品之類別。
+- 修改類別名稱，可以一次性修改同類別的商品之類別。
 
 ### 客戶資訊
 ![Alt text](mdImage/image-5.png)
@@ -131,5 +134,13 @@ API文件：[swagger文件](http://invoice.jason1231.com/api-docs)(尚未製作)
 - 產生 xml 檔案給 turnkey 上傳，因為此為測試，所以直接回傳 xml 結果樣本。
 
 ### 查詢發票
+![Alt text](mdImage/image-29.png)
+![Alt text](mdImage/image-26.png)
+
+- 查詢畫面，可以範圍時間搜尋，也可以輸入發票號碼查詢
 ### 查詢折讓單
-### 下載媒體申報檔
+![Alt text](mdImage/image-27.png)
+![Alt text](mdImage/image-28.png)
+
+- 查詢畫面，可以範圍時間搜尋，也可以輸入折讓的號碼查詢
+<!-- ### 下載媒體申報檔 -->

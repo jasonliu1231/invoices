@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%-include('head') %>
+</head>
+
+<body>
+  <%-include('navbar') %>
+    <div class="container mt-5">
+      <div class="content p-lg-5 p-sm-2">
+        <h1 class="lh-lg">發票列表</h1>
+        <div class="d-lg-flex">
+          <div class="input-group p-1 w-100">
+            <input id="start" type="date" class="form-control p-2" onchange="searchInvoice()">
+            <span class="input-group-text">~</span>
+            <input id="due" type="date" class="form-control p-2" onchange="searchInvoice()">
+          </div>
+          <div class="btn-group p-1 w-100" role="group" aria-label="Basic outlined example">
+            <input type="radio" class="btn-check" name="type" id="allInvoice" value="allInvoice" autocomplete="off"
+              checked onclick="searchInvoice()">
+            <label class="btn btn-outline-secondary" for="allInvoice">全部發票</label>
+            <input type="radio" class="btn-check" name="type" id="voidInvoice" value="voidInvoice" autocomplete="off"
+              onclick="searchInvoice()">
+            <label class="btn btn-outline-secondary" for="voidInvoice">作廢發票</label>
+            <input type="radio" class="btn-check" name="type" id="cnoteInvoice" value="cnoteInvoice" autocomplete="off"
+              onclick="searchInvoice()">
+            <label class="btn btn-outline-secondary" for="cnoteInvoice">折讓發票</label>
+            <input type="radio" class="btn-check" name="type" id="errorInvoice" value="errorInvoice" autocomplete="off"
+              onclick="searchInvoice()">
+            <label class="btn btn-outline-secondary" for="errorInvoice">問題發票</label>
+          </div>
+          <div class="btn-group p-1 w-100" role="group" aria-label="Basic outlined example">
+            <input id="invoiceNumber" type="text" class="form-control p-2" placeholder="請輸入發票號碼">
+            <button class="btn btn-outline-primary" type="button" onclick="invoiceByInum()"><img width="15"
+                src="/images/search.png" alt=""></button>
+          </div>
+        </div>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>發票號碼</th>
+              <th>發票日期</th>
+              <th>狀態</th>
+              <th>銷售額</th>
+              <th>稅額</th>
+              <th>開立人</th>
+            </tr>
+          </thead>
+          <tbody id="invoiceList">
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary d-none" id="invoiceMain" data-bs-toggle="modal"
+      data-bs-target="#exampleModal"></button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="invoice" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="invoice">發票明細</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <input class="d-none" type="text" id="invoiceid">
+            <ul class="list-group list-group-horizontal mb-1">
+              <li class="list-group-item w-100">發票號碼</li>
+              <li class="list-group-item w-100" id="inum"></li>
+            </ul>
+            <ul class="list-group list-group-horizontal mb-1">
+              <li class="list-group-item w-100">隨機碼</li>
+              <li class="list-group-item w-100" id="randomnumber"></li>
+            </ul>
+            <ul class="list-group list-group-horizontal mb-1">
+              <li class="list-group-item w-100">開立日期</li>
+              <li class="list-group-item w-100" id="date"></li>
+            </ul>
+            <ul class="list-group list-group-horizontal mb-1">
+              <li class="list-group-item w-100">折讓金額</li>
+              <li class="list-group-item w-100" id="cnoteamount"></li>
+            </ul>
+            <ul class="list-group list-group-horizontal mb-1">
+              <li class="list-group-item w-100">税別</li>
+              <li class="list-group-item w-100" id="taxtype"></li>
+            </ul>
+            <ul class="list-group list-group-horizontal mb-1">
+              <li class="list-group-item w-100">稅額</li>
+              <li class="list-group-item w-100" id="taxamount"></li>
+            </ul>
+            <ul class="list-group list-group-horizontal mb-1">
+              <li class="list-group-item w-100">總額</li>
+              <li class="list-group-item w-100" id="totalamount"></li>
+            </ul>
+            <ul class="list-group list-group-horizontal mb-1">
+              <li class="list-group-item w-100">列印狀態</li>
+              <li class="list-group-item w-100" id="isprint"></li>
+            </ul>
+            <h6>商品明細</h6>
+            <ul class="list-group list-group-horizontal mb-1">
+              <li class="list-group-item w-100">商品名稱</li>
+              <li class="list-group-item w-100">數量</li>
+              <li class="list-group-item w-100">單價</li>
+              <li class="list-group-item w-100">單位</li>
+            </ul>
+            <div id="invoiceDetails">
+
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal" onclick="printInvoice()">列印</button>
+            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal" onclick="hrefVoid()">作廢</button>
+            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal" onclick="hrefCnote()">折讓</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</body>
+
+</html>

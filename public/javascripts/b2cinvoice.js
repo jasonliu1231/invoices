@@ -4,7 +4,7 @@ $(async function () {
 });
 
 async function setDateToday() {
-    const today = getToday();
+    const today = getDate(new Date());
     $("#invoiceDate").val(today);
 
     const userid = localStorage.getItem("id");
@@ -414,7 +414,7 @@ async function saveInvoice() {
         return;
     }
     const userid = localStorage.getItem("id");
-    let token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
     const config = {
         method: "POST",
         headers: {

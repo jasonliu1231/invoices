@@ -1,9 +1,15 @@
 $(function () {
-    const today = getToday();
+    const url = new URL(location.href);
+    const cnum = url.searchParams.get("cnum");
+    $("#cnoteNumber").val(cnum);
+    if (cnum) {
+        cnote();
+    }
+    const today = getDate(new Date());
     $("#voidDate").val(today);
 });
 
-async function invoice() {
+async function cnote() {
     const cnoteNumber = $("#cnoteNumber").val();
     if (!cnoteNumber) {
         $("#cnoteNumber").addClass("border-danger");
@@ -39,7 +45,7 @@ function clearInput() {
     $("#cnoteDate").val("");
     $("#invoiceDate").val("");
     $("#remark").val("");
-    const today = getToday();
+    const today = getDate(new Date());
     $("#voidDate").val(today);
 }
 
@@ -62,7 +68,7 @@ async function saveVoid() {
     } else {
         clearInput()
         alertBox("success");
-        let token = localStorage.getItem("token");
+        const token = localStorage.getItem("token");
         window.open(`/xmlsample/${token}?id=${cnoteid}&type=D0501`);
     }
 }

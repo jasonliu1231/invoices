@@ -1,5 +1,11 @@
 $(function () {
-    const today = getToday();
+    const url = new URL(location.href);
+    const inum = url.searchParams.get("inum");
+    $("#invoiceNumber").val(inum);
+    if (inum) {
+        invoice();
+    }
+    const today = getDate(new Date());
     $("#voidDate").val(today);
 });
 
@@ -11,7 +17,10 @@ async function invoice() {
         return;
     }
     const config = apiConfig("GET");
-    const response = await fetch(`/get/invoice/${invoiceNumber}?type=void`, config);
+    const response = await fetch(
+        `/get/invoice/${invoiceNumber}?type=void`,
+        config
+    );
     if (!response.ok) {
         const errmsg = await response.text();
         alertBox("error", errmsg);
@@ -37,7 +46,7 @@ function clearInput() {
     $("#ReturnTaxDocumentNumber").val("");
     $("#invoiceNumber").val("");
     $("#remark").val("");
-    const today = getToday();
+    const today = getDate(new Date());
     $("#voidDate").val(today);
 }
 
@@ -60,9 +69,9 @@ async function saveVoid() {
         const errmsg = await response.text();
         alertBox("error", errmsg);
     } else {
-        clearInput()
+        clearInput();
         alertBox("success");
-        let token = localStorage.getItem("token");
+        const token = localStorage.getItem("token");
         window.open(`/xmlsample/${token}?id=${invoiceid}&type=C0501`);
     }
 }

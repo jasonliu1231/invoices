@@ -149,10 +149,10 @@ class Get {
         }
     }
 
-    async invoiceForInum(client, inum, type) {
+    async invoiceByInum(client, inum, type) {
         const invoiceInfo = {};
         try {
-            let sql = `SELECT id, inum, date, cnoteamount, taxrate, totalamount, taxamount FROM invoice WHERE inum=$1`;
+            let sql = `SELECT id, inum, date, cnoteamount, taxrate, totalamount, taxamount, taxtype, randomnumber, isprint FROM invoice WHERE inum=$1`;
             // 不同情況判斷條件不同，折讓要檢查發票可折讓額，作廢要檢查狀態跟是否折讓過。
             if (type === "cnote") {
                 sql += ` AND (totalamount - taxamount) >= cnoteamount`;
@@ -163,7 +163,7 @@ class Get {
             let params = [inum];
             let result = await client.query(sql, params);
             if (result.rows.length === 0) {
-                throw `查詢不到 ${inum} 的發票！請檢查是否有開立過折讓或是已經作廢！`;
+                throw `查詢不到 ${inum} 的發票！`;
             }
             invoiceInfo.invoiceMain = result.rows[0];
             const invoiceid = result.rows[0].id;
@@ -173,6 +173,27 @@ class Get {
             result = await client.query(sql, params);
             invoiceInfo.invoiceDetails = result.rows;
             return invoiceInfo;
+        } catch (err) {
+            throw "資料庫錯誤！原因：" + err;
+        }
+    }
+
+    async invoice(client, start, due, type) {
+        try {
+            let sql = `SELECT inum, date, totalamount, taxamount, state, name FROM invoice 
+                LEFT JOIN users ON users.id = invoice.createby
+                WHERE date >= $1 AND date <= $2`;
+            if (type === "voidInvoice") {
+                sql += ` AND state = '2'`;
+            } else if (type === "cnoteInvoice") {
+                sql += ` AND cnoteamount != 0`;
+            } else if (type === "errorInvoice") {
+                sql += ` AND state = '3'`;
+            }
+            sql += ` ORDER BY date DESC, inum DESC`;
+            let params = [start, due];
+            let result = await client.query(sql, params);
+            return result.rows;
         } catch (err) {
             throw "資料庫錯誤！原因：" + err;
         }
@@ -189,9 +210,9 @@ class Get {
         }
     }
 
-    async cnoteForInum(client, cnum) {
+    async cnoteByCnum(client, cnum) {
         try {
-            let sql = `SELECT c.id, c.cnum, c.date cdate, i.inum, i.date idate, c.totalamount, c.taxamount FROM cnote c
+            let sql = `SELECT c.id, c.cnum, c.date cdate, c.invoiceid, i.inum, i.date idate, i.cnoteamount, c.totalamount, c.taxamount FROM cnote c
                         LEFT JOIN invoice i ON c.invoiceid=i.id WHERE cnum=$1`;
             let params = [cnum];
             let result = await client.query(sql, params);
@@ -199,6 +220,19 @@ class Get {
                 throw `查詢不到 ${cnum} 的折讓單！`;
             }
             return result.rows[0];
+        } catch (err) {
+            throw "資料庫錯誤！原因：" + err;
+        }
+    }
+
+    async cnote(client, start, due) {
+        try {
+            let sql = `SELECT cnum, date, totalamount, taxamount, state, name FROM cnote
+                LEFT JOIN users ON users.id = cnote.createby
+                WHERE date >= $1 AND date <= $2 ORDER BY date DESC, cnum DESC`;
+            let params = [start, due];
+            let result = await client.query(sql, params);
+            return result.rows;
         } catch (err) {
             throw "資料庫錯誤！原因：" + err;
         }
@@ -322,6 +356,17 @@ class Get {
             const params = [id];
             const result = await client.query(sql, params);
 
+            return result.rows[0];
+        } catch (err) {
+            throw "資料庫錯誤！原因：" + err;
+        }
+    }
+
+    async E0402Info(client, id) {
+        try {
+            const sql = `SELECT seller.unum, type, yearmonth, tnum, beginno, endno, usedno, disabled FROM track  LEFT JOIN seller ON 1=1 WHERE id=$1`;
+            const params = [id];
+            const result = await client.query(sql, params);
             return result.rows[0];
         } catch (err) {
             throw "資料庫錯誤！原因：" + err;

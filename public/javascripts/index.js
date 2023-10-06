@@ -1,5 +1,5 @@
 $(async function () {
-    let token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
     // 判斷有沒有登入的 token 如果比對得上直接登入
     if (token) {
         const response = await fetch(`/login/${token}`);

@@ -11,8 +11,8 @@ $(async function () {
     $("#cnoteLink").attr("href", `/cnote/${token}`);
     $("#voidcnoteLink").attr("href", `/voidcnote/${token}`);
     $("#voidinvoiceLink").attr("href", `/voidinvoice/${token}`);
-    $("#serchinvoiceLink").attr("href", `/serchinvoice/${token}`);
-    $("#serchconteLink").attr("href", `/serchconte/${token}`);
+    $("#searchinvoiceLink").attr("href", `/searchinvoice/${token}`);
+    $("#searchconteLink").attr("href", `/searchconte/${token}`);
 });
 
 function theadTransition(column) {
@@ -82,6 +82,35 @@ function taxTypeTransition(val) {
     }
 }
 
+function stateTransition(val) {
+    switch (val) {
+        case "1":
+            return "已上傳";
+        case "2":
+            return "已作廢";
+        case "3":
+            return "Turnkey 回傳結果錯誤！";
+        default:
+            return val;
+    }
+}
+
+function dateTransition(val) {
+    const year = val.substring(0, 4);
+    const month = val.substring(4, 6);
+    const day = val.substring(6, 8);
+    return year + "-" + month + "-" + day;
+}
+
+function getDate(val) {
+    const date = new Date(val);
+    const today = `${date.getFullYear()}-${(date.getMonth() + 1)
+        .toString()
+        .padStart(2, 0)}-${date.getDate().toString().padStart(2, 0)}`;
+
+    return today;
+}
+
 function apiConfig(method, bodyInfo) {
     method = method.toUpperCase();
     const userid = localStorage.getItem("id");
@@ -98,15 +127,6 @@ function apiConfig(method, bodyInfo) {
     }
 
     return config;
-}
-
-function getToday() {
-    const date = new Date();
-    const today = `${date.getFullYear()}-${(date.getMonth() + 1)
-        .toString()
-        .padStart(2, 0)}-${date.getDate().toString().padStart(2, 0)}`;
-
-    return today;
 }
 
 function tableTarget(e) {

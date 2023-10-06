@@ -205,6 +205,9 @@ router.get("/invoiceLastDate", async function (req, res, next) {
 
 router.get("/invoice", async function (req, res, next) {
     const userid = req.headers["userid"];
+    const start = req.query.start;
+    const due = req.query.due;
+    const type = req.query.type;
     const db = new DB();
     const client = await db.connectpgdb();
     try {
@@ -215,7 +218,7 @@ router.get("/invoice", async function (req, res, next) {
             throw "權限不足";
         }
         const get = new Get();
-        result = await get.invoiceForDate(client);
+        result = await get.invoice(client, start, due, type);
         res.send(result);
     } catch (error) {
         res.status(404).send(error);
@@ -238,7 +241,7 @@ router.get("/invoice/:inum", async function (req, res, next) {
             throw "權限不足";
         }
         const get = new Get();
-        result = await get.invoiceForInum(client, inum, type);
+        result = await get.invoiceByInum(client, inum, type);
         res.send(result);
     } catch (error) {
         res.status(404).send(error);
@@ -248,12 +251,35 @@ router.get("/invoice/:inum", async function (req, res, next) {
 });
 
 router.get("/cnotenumber", async function (req, res, next) {
-    const today = req.query.today
+    const today = req.query.today;
     const db = new DB();
     const client = await db.connectpgdb();
     try {
         const get = new Get();
         result = await get.cnotenumber(client, today);
+        res.send(result);
+    } catch (error) {
+        res.status(404).send(error);
+    } finally {
+        client.release();
+    }
+});
+
+router.get("/cnote", async function (req, res, next) {
+    const userid = req.headers["userid"];
+    const start = req.query.start;
+    const due = req.query.due;
+    const db = new DB();
+    const client = await db.connectpgdb();
+    try {
+        // 檢查權限
+        const common = new Common();
+        let result = await common.permis(client, userid);
+        if (!result.invoiceread) {
+            throw "權限不足";
+        }
+        const get = new Get();
+        result = await get.cnote(client, start, due);
         res.send(result);
     } catch (error) {
         res.status(404).send(error);
@@ -275,7 +301,7 @@ router.get("/cnote/:cnum", async function (req, res, next) {
             throw "權限不足";
         }
         const get = new Get();
-        result = await get.cnoteForInum(client, cnum);
+        result = await get.cnoteByCnum(client, cnum);
         res.send(result);
     } catch (error) {
         res.status(404).send(error);

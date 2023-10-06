@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <%-include('head') %>
+</head>
+
+<body>
+  <%-include('navbar') %>
+    <div class="container mt-5">
+      <div class="content p-lg-5 p-sm-2">
+        <h1 class="lh-lg">折讓單列表</h1>
+        <div class="d-lg-flex">
+          <div class="input-group p-1 w-100">
+            <input id="start" type="date" class="form-control p-2" onchange="searchCnote()">
+            <span class="input-group-text">~</span>
+            <input id="due" type="date" class="form-control p-2" onchange="searchCnote()">
+          </div>
+          <div class="btn-group p-1 w-100" role="group" aria-label="Basic outlined example">
+            <input id="cnoteNumber" type="text" class="form-control p-2" placeholder="請輸入折讓單號碼">
+            <button class="btn btn-outline-primary" type="button" onclick="cnoteByCnum()"><img width="15"
+                src="/images/search.png" alt=""></button>
+          </div>
+        </div>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>折讓單號碼</th>
+              <th>折讓日期</th>
+              <th>狀態</th>
+              <th>折讓銷售額</th>
+              <th>折讓稅額</th>
+              <th>開立人</th>
+            </tr>
+          </thead>
+          <tbody id="cnoteList">
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary d-none" id="invoiceMain" data-bs-toggle="modal"
+      data-bs-target="#exampleModal"></button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="invoice" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="invoice">折讓單明細</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <input class="d-none" type="text" id="invoiceid">
+            <ul class="list-group list-group-horizontal mb-1">
+              <li class="list-group-item w-100">折讓單號碼</li>
+              <li class="list-group-item w-100" id="cnum"></li>
+            </ul>
+            <ul class="list-group list-group-horizontal mb-1">
+              <li class="list-group-item w-100">折讓日期</li>
+              <li class="list-group-item w-100" id="cdate"></li>
+            </ul>
+            <ul class="list-group list-group-horizontal mb-1">
+              <li class="list-group-item w-100">發票號碼</li>
+              <li class="list-group-item w-100" id="inum"></li>
+            </ul>
+            <ul class="list-group list-group-horizontal mb-1">
+              <li class="list-group-item w-100">發票日期</li>
+              <li class="list-group-item w-100" id="idate"></li>
+            </ul>
+            <ul class="list-group list-group-horizontal mb-1">
+              <li class="list-group-item w-100">折讓金額</li>
+              <li class="list-group-item w-100" id="cnoteamount"></li>
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal" onclick="printInvoice()">列印</button>
+            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal" onclick="hrefVoid()">作廢</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</body>
+
+</html>

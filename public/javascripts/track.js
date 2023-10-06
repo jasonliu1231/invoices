@@ -28,7 +28,7 @@ $(async function () {
         const data = await response.json();
         let html = ``;
         data.forEach((item) => {
-            html += `<tr onclick="handleTableRowClick(event)">
+            html += `<tr class="item" onclick="handleTableRowClick(event)">
                         <th scope="row"><input class="form-check-input me-1" type="checkbox" value="${
                             item.id
                         }"></th>
@@ -39,6 +39,7 @@ $(async function () {
                         <td>${item.endno}</td>
                         <td>${item.usedno ? item.usedno : "未曾使用"}</td>
                         <td>${item.disabled ? "已上傳" : "使用中"}</td>
+                        <td class="id d-none">${item.id}</td>
                     </tr>`;
         });
         $("#trackBody").html(html);
@@ -187,4 +188,17 @@ function setInput(e) {
     } else {
         input.prop("checked", true);
     }
+}
+
+function createXML() {
+    const token = localStorage.getItem("token");
+    const items = $(".item");
+    items.each((index, item) => {
+        const ischecked = $(item).find("input").is(":checked");
+        if (ischecked) {
+            const id = items.find(".id").html();
+            console.log(id)
+            window.open(`/xmlsample/${token}?id=${id}&type=E0402`);
+        }
+    });
 }
