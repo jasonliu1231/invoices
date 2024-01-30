@@ -5,12 +5,6 @@
 [aws 測站](http://invoice.jason1231.com/)
 AWS EC2 + AWS RDS + jenkins
 
-[vercel 測站](http://invoices.jason1231.com/)
-vercel + ElephantSQL
-
-兩測試站的檔案相同，但是 vercel 可能會有預期以外的錯誤～
-
-API文件：[swagger文件](http://invoice.jason1231.com/api-docs)(製作中)
 
 ### 營業人資料
 ![Alt text](mdImage/image.png)
